@@ -79,26 +79,32 @@ namespace SHANUExcelAddIn
             Globals.ThisAddIn.Application.DisplayAlerts = false;
             Globals.ThisAddIn.Application.AskToUpdateLinks = false;
 
-            Excel.Range objRange = Globals.ThisAddIn.Application.ActiveCell;
+            try
+            {
+                Excel.Worksheet activeSheet = Globals.ThisAddIn.Application.Worksheets[1];
 
-            Excel.Worksheet sheet = Globals.ThisAddIn.Application.Worksheets[1];
+                this.DrawHeader(activeSheet);
 
-            this.DrawHeader(sheet);
+                // open files
+                Excel.Workbook attendanceBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\科技部外包考勤.xlsx");
+                List<AttendanceInfo> unsualInfoList = this.GetUnusalAttendance(attendanceBook.Worksheets[1]);
 
-            // open files
-            Excel.Workbook attendanceBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\科技部外包考勤.xlsx");
-            List<AttendanceInfo> unsualInfoList = this.GetUnusalAttendance(attendanceBook.Worksheets[1]);
+                // close files
+                attendanceBook.Close();
 
-            // close files
-            attendanceBook.Close();
+                // Person Repository
+                Excel.Workbook personBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\外包人员台账.xlsx");
+                PersonInfoRepo.GenerateInfoMap(personBook);
+                personBook.Close();
 
-            // Person Repository
-            Excel.Workbook personBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\外包人员台账.xlsx");
-            PersonInfoRepo.GenerateInfoMap(personBook);
-            personBook.Close();
+                // write unsual record
+                this.WriteUnsualInfo(unsualInfoList, activeSheet);
 
-            // write unsual record
-            this.WriteUnsualInfo(unsualInfoList, sheet);
+            }
+            catch (Exception exp)
+            {
+                MessageBox.Show(exp.ToString());
+            }
 
             // Turn on screen updating and displaying alerts again
             Globals.ThisAddIn.Application.ScreenUpdating = true;
@@ -221,7 +227,17 @@ namespace SHANUExcelAddIn
 
                 objRange = sheet.Cells[rowIndex, colIndex++];
                 //objRange.Value = "备注";
-                objRange.Value = nextInfo.State.ToString();
+                switch (nextInfo.State)
+                {
+                    case AttendanceState.Late:
+                        objRange.Value = "迟到/早退";
+                        break;
+                    case AttendanceState.Absent:
+                        objRange.Value = "旷工";
+                        break;
+                    default:
+                        break;
+                }
                 objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
             }
         }
@@ -316,6 +332,13 @@ namespace SHANUExcelAddIn
             if (!todayInfo.IsValid)
             {
                 todayInfo.State = AttendanceState.Absent;
+                return;
+            }
+
+            if (todayInfo.WorkTime.Hours < 4)
+            {
+                todayInfo.State = AttendanceState.Absent;
+                Trace.WriteLine("worktime less than 4 hours");
                 return;
             }
 

@@ -27,7 +27,13 @@ namespace SHANUExcelAddIn
         {
             int rowIndex = 1;
 
-            Excel.Worksheet sheet = book.Sheets[1];
+            int sheetIndex = 1;
+            Excel.Worksheet sheet = book.Sheets[sheetIndex];
+            while ((sheet.Name != "外包员工资料") && (sheetIndex++ < book.Sheets.Count))
+            {
+                sheet = book.Sheets[sheetIndex];
+            }
+            
 
             for (rowIndex = 1; rowIndex < 5000; rowIndex++)
             {
