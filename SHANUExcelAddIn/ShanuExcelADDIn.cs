@@ -10,6 +10,7 @@ using Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Tools.Excel;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Data.SqlClient;
+using System.Diagnostics;
 /// <summary>
 /// Author      : Shanu
 /// Create date : 2015-02-23
@@ -23,15 +24,15 @@ namespace SHANUExcelAddIn
 {
     public partial class ShanuExcelADDIn : UserControl
     {
-      
+
         public ShanuExcelADDIn()
         {
             InitializeComponent();
         }
 
-       
-       
-       
+
+
+
         //private void btnSearch_Click(object sender, EventArgs e)
         //{
         //    try
@@ -84,22 +85,20 @@ namespace SHANUExcelAddIn
 
             this.DrawHeader(sheet);
 
-            //objRange.Interior.Color = Color.Pink; //Active Cell back Color
-            //objRange.Borders.Color = Color.Red;// Active Cell border Color
-            //objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-            //objRange.Value = txtPath.Text; //Active Cell Text Add
-            //objRange.Columns.AutoFit();
-
-
-
             // open files
-            Excel.Workbook book = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\科技部外包考勤.xlsx");
-            this.GetLatecomer(book.Worksheets[1], sheet);
-            
-            
+            Excel.Workbook attendanceBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\科技部外包考勤.xlsx");
+            List<AttendanceInfo> unsualInfoList = this.GetUnusalAttendance(attendanceBook.Worksheets[1]);
 
             // close files
-            book.Close();
+            attendanceBook.Close();
+
+            // Person Repository
+            Excel.Workbook personBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\外包人员台账.xlsx");
+            PersonInfoRepo.GenerateInfoMap(personBook);
+            personBook.Close();
+
+            // write unsual record
+            this.WriteUnsualInfo(unsualInfoList, sheet);
 
             // Turn on screen updating and displaying alerts again
             Globals.ThisAddIn.Application.ScreenUpdating = true;
@@ -134,7 +133,7 @@ namespace SHANUExcelAddIn
             System.Windows.Forms.Clipboard.Clear();
         }
 
-       
+
         private void DrawHeader(Excel.Worksheet sheet)
         {
             int rowIndex = 1;
@@ -146,6 +145,14 @@ namespace SHANUExcelAddIn
 
             objRange = sheet.Cells[rowIndex, colIndex++];
             objRange.Value = "所属公司";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "项目组";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "主管项目经理";
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
@@ -165,12 +172,71 @@ namespace SHANUExcelAddIn
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
         }
 
-        private void GetLatecomer(Excel.Worksheet srcSheet, Excel.Worksheet destSheet)
+        private void WriteUnsualInfo(List<AttendanceInfo> infoList, Excel.Worksheet sheet)
+        {
+            int rowIndex = 1;
+            int colIndex = 1;
+
+            foreach (var nextInfo in infoList)
+            {
+                rowIndex++; // from row #2
+                colIndex = 1;
+
+                Excel.Range objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "姓名";
+                objRange.Value = nextInfo.Name;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                PersonInfo personInfo = PersonInfoRepo.GetPersonInfo(nextInfo.Name);
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "所属公司";
+                objRange.Value = personInfo != null ? personInfo.Company : string.Empty;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "项目组";
+                objRange.Value = personInfo != null ? personInfo.Project : string.Empty;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "主管项目经理";
+                objRange.Value = personInfo != null ? personInfo.Manager : string.Empty;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "日期";
+                objRange.Value = nextInfo.ArriveTime.ToShortDateString();
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "上班打卡时间";
+                objRange.Value = nextInfo.ArriveTime.ToShortTimeString();
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "下班打卡时间";
+                objRange.Value = nextInfo.LeaveTime.ToShortTimeString();
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "备注";
+                objRange.Value = nextInfo.State.ToString();
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            }
+        }
+
+        private List<AttendanceInfo> GetUnusalAttendance(Excel.Worksheet srcSheet)
         {
             int srcRowIndex = 1;
             int descRowIndex = 2; // the first line is header
 
-            Excel.Range objRange = null;
+            // 姓名 日期  上班打卡时间 下班打卡时间
+
+            AttendanceInfo yesterdayInfo = null;
+
+            List<AttendanceInfo> infoList = new List<AttendanceInfo>();
+
             for (srcRowIndex = 2; srcRowIndex < 10000; srcRowIndex++)
             {
                 // name
@@ -180,24 +246,94 @@ namespace SHANUExcelAddIn
                     break;
                 }
 
-                // on duty
-                DateTime onDutyTime = Convert.ToDateTime(srcSheet.Cells[srcRowIndex, 3].Value);
+                AttendanceInfo todayInfo = new AttendanceInfo(srcSheet.Cells[srcRowIndex, 1].Value,
+                    srcSheet.Cells[srcRowIndex, 2].Value, srcSheet.Cells[srcRowIndex, 3].Value,
+                    srcSheet.Cells[srcRowIndex, 4].Value);
 
-                // off duty
-                DateTime offDutyTime = Convert.ToDateTime(srcSheet.Cells[srcRowIndex, 4].Value);
+                infoList.Add(todayInfo);
+            }
 
-                TimeSpan span = offDutyTime - onDutyTime;
-                // off duty later than 00:00
-                if (offDutyTime < onDutyTime)
+            infoList.Sort((info1, info2) =>
+            {
+                if (!info1.Name.Equals(info2.Name))
                 {
-                    int ii = 0;
-                    span = Convert.ToDateTime("23:59:59") - onDutyTime;
-                    span += (offDutyTime - Convert.ToDateTime("00:00:00"));
+                    return info1.Name.CompareTo(info2.Name);
                 }
-                if (span.TotalHours < 9)
+
+                return (int)(info1.ArriveTime - info2.ArriveTime).TotalHours;
+            });
+
+            foreach (var todayInfo in infoList)
+            {
+                this.SetState(todayInfo, yesterdayInfo);
+
+                if (todayInfo.State != AttendanceState.None)
                 {
-                    int ii = 0;
+                    Trace.WriteLine(string.Format("*** [{0}]  [{1}]  [{2}]", todayInfo.Name, todayInfo.State, todayInfo.ArriveTime));
                 }
+
+                yesterdayInfo = todayInfo;
+            }
+
+            List<AttendanceInfo> unsualInfo = new List<AttendanceInfo>();
+            infoList.ForEach(x
+                =>
+            {
+                if (x.State != AttendanceState.None)
+                {
+                    unsualInfo.Add(x);
+                }
+            });
+
+            return unsualInfo;
+        }
+
+        private void SetState(AttendanceInfo todayInfo, AttendanceInfo yesterdayInfo)
+        {
+            // skip the weekend
+            if ((todayInfo.ArriveTime.DayOfWeek == DayOfWeek.Saturday)
+                || (todayInfo.ArriveTime.DayOfWeek == DayOfWeek.Sunday))
+            {
+                Trace.WriteLine("skip weekend");
+                return;
+            }
+
+
+            // assure the same person
+            if ((yesterdayInfo != null) && (yesterdayInfo.Name != todayInfo.Name))
+            {
+                Trace.WriteLine("name changed");
+                yesterdayInfo = null;
+            }
+
+            // assure the date is contiguous
+            if ((yesterdayInfo != null) && (todayInfo.ArriveTime.DayOfYear - yesterdayInfo.ArriveTime.DayOfYear != 1))
+            {
+                Trace.WriteLine("date is not contiguous");
+                yesterdayInfo = null;
+            }
+
+            if (!todayInfo.IsValid)
+            {
+                todayInfo.State = AttendanceState.Absent;
+                return;
+            }
+
+            if ((todayInfo.WorkTime.Hours < 9) || (todayInfo.ArriveTime.Hour > 10))
+            {
+                if (yesterdayInfo == null)
+                {
+                    todayInfo.State = AttendanceState.Late;
+                    return;
+                }
+
+                if (yesterdayInfo.WorkTime.Hours + todayInfo.WorkTime.Hours < 20)
+                {
+                    todayInfo.State = AttendanceState.Late;
+                    return;
+                }
+
+                Trace.WriteLine("yesterday leave too late.");
             }
         }
 
