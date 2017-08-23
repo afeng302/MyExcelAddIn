@@ -29,6 +29,11 @@ namespace SHANUExcelAddIn
                 this.Name = name;
             }
 
+            if (!string.IsNullOrWhiteSpace(date))
+            {
+                this.Date = Convert.ToDateTime(date);
+            }
+
             if (!string.IsNullOrWhiteSpace(date) && !string.IsNullOrWhiteSpace(arriTime))
             {
                 this.ArriveTime = Convert.ToDateTime(string.Format("{0} {1}", date, arriTime));
@@ -48,6 +53,11 @@ namespace SHANUExcelAddIn
         }
 
         public string Name { get; set; }
+
+        /// <summary>
+        /// will be used while there is no arrive time nor leave time (absence)
+        /// </summary>
+        public DateTime Date { get; set; }
 
         public DateTime ArriveTime { get; set; }
 

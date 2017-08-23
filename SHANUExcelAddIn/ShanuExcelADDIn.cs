@@ -212,17 +212,23 @@ namespace SHANUExcelAddIn
 
                 objRange = sheet.Cells[rowIndex, colIndex++];
                 //objRange.Value = "日期";
-                objRange.Value = nextInfo.ArriveTime.ToShortDateString();
+                objRange.Value = nextInfo.Date.ToShortDateString();
                 objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                 objRange = sheet.Cells[rowIndex, colIndex++];
                 //objRange.Value = "上班打卡时间";
-                objRange.Value = nextInfo.ArriveTime.ToShortTimeString();
+                if (nextInfo.State != AttendanceState.Absent)
+                {
+                    objRange.Value = nextInfo.ArriveTime.ToShortTimeString();
+                }
                 objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                 objRange = sheet.Cells[rowIndex, colIndex++];
                 //objRange.Value = "下班打卡时间";
-                objRange.Value = nextInfo.LeaveTime.ToShortTimeString();
+                if (nextInfo.State != AttendanceState.Absent)
+                {
+                    objRange.Value = nextInfo.LeaveTime.ToShortTimeString();
+                }
                 objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                 objRange = sheet.Cells[rowIndex, colIndex++];
