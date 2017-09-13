@@ -10,7 +10,8 @@ namespace SHANUExcelAddIn
     {
         None = 0,
         Late,   // be late or leave early
-        Absent  // no show
+        Absent, // no show
+        Left    // has left
     }
 
     class AttendanceInfo

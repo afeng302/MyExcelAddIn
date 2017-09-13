@@ -29,26 +29,27 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ShanuExcelADDIn));
-            this.btnAddText = new System.Windows.Forms.Button();
+            this.btnAttendaceExpception = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnStaffStatistic = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // btnAddText
+            // btnAttendaceExpception
             // 
-            this.btnAddText.BackColor = System.Drawing.Color.OliveDrab;
-            this.btnAddText.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnAddText.BackgroundImage")));
-            this.btnAddText.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnAddText.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnAddText.Font = new System.Drawing.Font("Tahoma", 16F, System.Drawing.FontStyle.Bold);
-            this.btnAddText.ForeColor = System.Drawing.Color.DarkOliveGreen;
-            this.btnAddText.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnAddText.Location = new System.Drawing.Point(3, 89);
-            this.btnAddText.Name = "btnAddText";
-            this.btnAddText.Size = new System.Drawing.Size(117, 40);
-            this.btnAddText.TabIndex = 257;
-            this.btnAddText.Text = "考勤异常";
-            this.btnAddText.UseVisualStyleBackColor = false;
-            this.btnAddText.Click += new System.EventHandler(this.btnAddText_Click);
+            this.btnAttendaceExpception.BackColor = System.Drawing.Color.OliveDrab;
+            this.btnAttendaceExpception.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnAttendaceExpception.BackgroundImage")));
+            this.btnAttendaceExpception.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnAttendaceExpception.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnAttendaceExpception.Font = new System.Drawing.Font("Tahoma", 16F, System.Drawing.FontStyle.Bold);
+            this.btnAttendaceExpception.ForeColor = System.Drawing.Color.DarkOliveGreen;
+            this.btnAttendaceExpception.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnAttendaceExpception.Location = new System.Drawing.Point(3, 89);
+            this.btnAttendaceExpception.Name = "btnAttendaceExpception";
+            this.btnAttendaceExpception.Size = new System.Drawing.Size(117, 40);
+            this.btnAttendaceExpception.TabIndex = 257;
+            this.btnAttendaceExpception.Text = "考勤异常";
+            this.btnAttendaceExpception.UseVisualStyleBackColor = false;
+            this.btnAttendaceExpception.Click += new System.EventHandler(this.btnAttendanceException_Click);
             // 
             // label1
             // 
@@ -60,22 +61,41 @@
             this.label1.TabIndex = 260;
             this.label1.Text = "目录： “C:\\data”\r\n文件： \r\n    “科技部外包考勤.xlsx”\r\n    “外包人员台账.xlsx”\r\n";
             // 
+            // btnStaffStatistic
+            // 
+            this.btnStaffStatistic.BackColor = System.Drawing.Color.OliveDrab;
+            this.btnStaffStatistic.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnStaffStatistic.BackgroundImage")));
+            this.btnStaffStatistic.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnStaffStatistic.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnStaffStatistic.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnStaffStatistic.ForeColor = System.Drawing.Color.DarkOliveGreen;
+            this.btnStaffStatistic.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnStaffStatistic.Location = new System.Drawing.Point(3, 149);
+            this.btnStaffStatistic.Name = "btnStaffStatistic";
+            this.btnStaffStatistic.Size = new System.Drawing.Size(117, 45);
+            this.btnStaffStatistic.TabIndex = 261;
+            this.btnStaffStatistic.Text = "人力外包\r\n人员统计";
+            this.btnStaffStatistic.UseVisualStyleBackColor = false;
+            this.btnStaffStatistic.Click += new System.EventHandler(this.btnStaffStatistic_Click);
+            // 
             // ShanuExcelADDIn
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(172)))), ((int)(((byte)(91)))));
+            this.Controls.Add(this.btnStaffStatistic);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.btnAddText);
+            this.Controls.Add(this.btnAttendaceExpception);
             this.Name = "ShanuExcelADDIn";
-            this.Size = new System.Drawing.Size(202, 249);
+            this.Size = new System.Drawing.Size(202, 313);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.Button btnAddText;
+        private System.Windows.Forms.Button btnAttendaceExpception;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnStaffStatistic;
     }
 }
