@@ -49,21 +49,25 @@ namespace SHANUExcelAddIn
                 // open files
                 Excel.Workbook attendanceBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\科技部外包考勤.xls");
 
-                List<AttendanceInfo> infoList = AttendanceUtil.GetAttendanceInfoList(attendanceBook.Worksheets[1]);
+                List<AttendanceInfo> attendanceInfoList = AttendanceUtil.GetAttendanceInfoList(attendanceBook.Worksheets[1]);
 
                 // close files
                 attendanceBook.Close();
 
                 // get unsual info 
-                List<AttendanceInfo> unsualInfoList = AttendanceUtil.GetUnusalAttendance(infoList);
+                List<AttendanceInfo> unsualInfoList = AttendanceUtil.GetUnusalAttendance(attendanceInfoList);
 
                 // Person Repository
                 Excel.Workbook personBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\外包人员台账.xlsx");
                 PersonInfoRepo.GenerateInfoMapByName(personBook);
                 personBook.Close();
 
+                // get no show list
+                List<PersonInfo> outsourceList = PersonInfoRepo.GetOnsiteOutsourceList();
+                List<PersonInfo> noShowList = AttendanceUtil.GetNoShowPersonList(outsourceList, attendanceInfoList);
+
                 // write unsual record
-                this.WriteUnsualInfo(unsualInfoList, activeSheet);
+                this.WriteUnsualInfo(unsualInfoList, noShowList, activeSheet);
 
             }
             catch (Exception exp)
@@ -127,6 +131,10 @@ namespace SHANUExcelAddIn
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "所属中心";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
             objRange.Value = "日期";
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
@@ -143,12 +151,13 @@ namespace SHANUExcelAddIn
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
         }
 
-        private void WriteUnsualInfo(List<AttendanceInfo> infoList, Excel.Worksheet sheet)
+        private void WriteUnsualInfo(List<AttendanceInfo> attendanceInfoList, List<PersonInfo> noShowList, Excel.Worksheet sheet)
         {
             int rowIndex = 1;
             int colIndex = 1;
 
-            foreach (var nextInfo in infoList)
+            // unsual attendance
+            foreach (var nextInfo in attendanceInfoList)
             {
                 PersonInfo personInfo = PersonInfoRepo.GetPersonInfo(nextInfo.Name);
                 if (personInfo == null)
@@ -168,66 +177,92 @@ namespace SHANUExcelAddIn
                 rowIndex++; // from row #2
                 colIndex = 1;
 
-                Excel.Range objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "姓名";
-                objRange.Value = nextInfo.Name;
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "所属公司";
-                objRange.Value = personInfo != null ? personInfo.Company : string.Empty;
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "项目组";
-                objRange.Value = personInfo != null ? personInfo.Project : string.Empty;
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "主管项目经理";
-                objRange.Value = personInfo != null ? personInfo.Manager : string.Empty;
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "日期";
-                objRange.Value = nextInfo.Date.ToShortDateString();
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "上班打卡时间";
-                if (nextInfo.State != AttendanceState.Absent)
-                {
-                    objRange.Value = nextInfo.ArriveTime.ToShortTimeString();
-                }
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "下班打卡时间";
-                if (nextInfo.State != AttendanceState.Absent)
-                {
-                    objRange.Value = nextInfo.LeaveTime.ToShortTimeString();
-                }
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "备注";
-                switch (nextInfo.State)
-                {
-                    case AttendanceState.Late:
-                        objRange.Value = "迟到/早退";
-                        break;
-                    case AttendanceState.Absent:
-                        objRange.Value = "旷工";
-                        break;
-                    case AttendanceState.Left:
-                        objRange.Value = "离场？";
-                        break;
-                    default:
-                        break;
-                }
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                this.WriteAttendanceRow(sheet, rowIndex, colIndex, nextInfo, personInfo);
             }
-        }        
+
+            // no show list
+            foreach (var nextInfo in noShowList)
+            {
+                rowIndex++;
+                colIndex = 1;
+
+                AttendanceInfo attendanceInfo = new AttendanceInfo(nextInfo.Name, string.Empty, string.Empty, string.Empty);
+                attendanceInfo.State = AttendanceState.NoShow;
+
+                this.WriteAttendanceRow(sheet, rowIndex, colIndex, attendanceInfo, nextInfo);
+            }
+        }
+
+        private void WriteAttendanceRow(Excel.Worksheet sheet, int rowIndex, int colIndex,
+            AttendanceInfo attendanceInfo, PersonInfo personInfo)
+        {
+            Excel.Range objRange = sheet.Cells[rowIndex, colIndex++];
+            //objRange.Value = "姓名";
+            objRange.Value = attendanceInfo.Name;
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            //objRange.Value = "所属公司";
+            objRange.Value = personInfo != null ? personInfo.Company : string.Empty;
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            //objRange.Value = "项目组";
+            objRange.Value = personInfo != null ? personInfo.Project : string.Empty;
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            //objRange.Value = "主管项目经理";
+            objRange.Value = personInfo != null ? personInfo.Manager : string.Empty;
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            //objRange.Value = "所属中心";
+            objRange.Value = personInfo != null ? personInfo.Department : string.Empty;
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            //objRange.Value = "日期";
+            objRange.Value = attendanceInfo.Date.ToShortDateString();
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            //objRange.Value = "上班打卡时间";
+            if (attendanceInfo.State != AttendanceState.Absent)
+            {
+                objRange.Value = attendanceInfo.ArriveTime.ToShortTimeString();
+            }
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            //objRange.Value = "下班打卡时间";
+            if (attendanceInfo.State != AttendanceState.Absent)
+            {
+                objRange.Value = attendanceInfo.LeaveTime.ToShortTimeString();
+            }
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            //objRange.Value = "备注";
+            switch (attendanceInfo.State)
+            {
+                case AttendanceState.Late:
+                    objRange.Value = "迟到/早退";
+                    break;
+                case AttendanceState.Absent:
+                    objRange.Value = "旷工";
+                    break;
+                case AttendanceState.Left:
+                    objRange.Value = "离场？";
+                    break;
+                case AttendanceState.NoShow:
+                    objRange.Value = "无考勤记录？";
+                    break;
+                default:
+                    break;
+            }
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        }
 
         private void btnStaffStatistic_Click(object sender, EventArgs e)
         {
@@ -244,7 +279,7 @@ namespace SHANUExcelAddIn
                 personBook.Close();
 
                 // filter out person
-                List<PersonInfo> outsourceList = PersonInfoRepo.GetOutsourceList();
+                List<PersonInfo> outsourceList = PersonInfoRepo.GetOnsiteOutsourceList();
 
                 // 
                 this.WriteOutsourceInfo(outsourceList, Globals.ThisAddIn.Application.Worksheets[1]);

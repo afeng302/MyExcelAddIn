@@ -78,6 +78,27 @@ namespace SHANUExcelAddIn.Util
             return unsualInfoList;
         }
 
+        public static List<PersonInfo> GetNoShowPersonList(List<PersonInfo> personInfoList, List<AttendanceInfo> attendanceInfoList)
+        {
+            HashSet<string> attendanceMap = new HashSet<string>();
+
+            foreach (var nextInfo in attendanceInfoList)
+            {
+                attendanceMap.Add(nextInfo.Name);
+            }
+
+            List<PersonInfo> noShowList = new List<PersonInfo>();
+            foreach (var nextInfo in personInfoList)
+            {
+                if (!attendanceMap.Contains(nextInfo.Name))
+                {
+                    noShowList.Add(nextInfo);
+                }
+            }
+
+            return noShowList;
+        }
+
         static void SetAttendanceState(AttendanceInfo todayInfo, AttendanceInfo yesterdayInfo)
         {
             // skip the weekend

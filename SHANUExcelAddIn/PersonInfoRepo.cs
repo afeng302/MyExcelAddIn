@@ -77,7 +77,7 @@ namespace SHANUExcelAddIn
             }
         }
 
-        public static List<PersonInfo> GetOutsourceList()
+        public static List<PersonInfo> GetOnsiteOutsourceList()
         {
             List<PersonInfo> outsourceList = new List<PersonInfo>();
 
