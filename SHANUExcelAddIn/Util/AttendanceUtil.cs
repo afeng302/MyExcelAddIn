@@ -10,24 +10,37 @@ namespace SHANUExcelAddIn.Util
     {
         public static List<AttendanceInfo> GetAttendanceInfoList(Microsoft.Office.Interop.Excel.Worksheet srcSheet)
         {
-            int srcRowIndex = 1;
+            int startRowIndex = 1;
+            int startColIndex = 1;
 
-            // 姓名 日期  上班打卡时间 下班打卡时间
+            // locate name collum
+            for (int i = 1; i < 10; i++)
+            {
+                string name = srcSheet.Cells[1, i].Value != null ? srcSheet.Cells[1, i].Value.ToString() : string.Empty;
+                if (name.Trim() == "姓名")
+                {
+                    startColIndex = i;
+                    break;
+                }
+            }
 
+            // 姓名 日期  签到时间 签退时间
             List<AttendanceInfo> infoList = new List<AttendanceInfo>();
 
-            for (srcRowIndex = 2; srcRowIndex < 10000; srcRowIndex++)
+            for (startRowIndex = 2; startRowIndex < 10000; startRowIndex++)
             {
                 // name
-                string name = srcSheet.Cells[srcRowIndex, 1].Value;
+                string name = srcSheet.Cells[startRowIndex, 1].Value;
                 if (string.IsNullOrWhiteSpace(name))
                 {
                     break;
                 }
 
-                AttendanceInfo todayInfo = new AttendanceInfo(srcSheet.Cells[srcRowIndex, 1].Value,
-                    srcSheet.Cells[srcRowIndex, 2].Value, srcSheet.Cells[srcRowIndex, 3].Value,
-                    srcSheet.Cells[srcRowIndex, 4].Value);
+                AttendanceInfo todayInfo = new AttendanceInfo(
+                    srcSheet.Cells[startRowIndex, startColIndex].Value,
+                    srcSheet.Cells[startRowIndex, startColIndex + 1].Value, 
+                    srcSheet.Cells[startRowIndex, startColIndex + 2].Value,
+                    srcSheet.Cells[startRowIndex, startColIndex + 3].Value);
 
                 infoList.Add(todayInfo);
             }
