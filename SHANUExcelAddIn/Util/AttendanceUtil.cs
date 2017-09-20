@@ -27,10 +27,10 @@ namespace SHANUExcelAddIn.Util
             // 姓名 日期  签到时间 签退时间
             List<AttendanceInfo> infoList = new List<AttendanceInfo>();
 
-            for (startRowIndex = 2; startRowIndex < 10000; startRowIndex++)
+            for (startRowIndex = 2; startRowIndex < 50000; startRowIndex++)
             {
                 // name
-                string name = srcSheet.Cells[startRowIndex, 1].Value;
+                string name = srcSheet.Cells[startRowIndex, startColIndex].Value;
                 if (string.IsNullOrWhiteSpace(name))
                 {
                     break;
@@ -59,7 +59,11 @@ namespace SHANUExcelAddIn.Util
             return infoList;
         }
 
-
+        /// <summary>
+        /// get unsual attandence list and also set the state on origin items
+        /// </summary>
+        /// <param name="attendanceList"></param>
+        /// <returns></returns>
         public static List<AttendanceInfo> GetUnusalAttendance(List<AttendanceInfo> attendanceList)
         {
             AttendanceInfo yesterdayInfo = null;
@@ -80,7 +84,7 @@ namespace SHANUExcelAddIn.Util
             attendanceList.ForEach(x
                 =>
             {
-                if (x.State != AttendanceState.None)
+                if ((x.State != AttendanceState.None) && (x.State != AttendanceState.PayLeave))
                 {
                     unsualInfoList.Add(x);
                 }
@@ -115,10 +119,19 @@ namespace SHANUExcelAddIn.Util
         static void SetAttendanceState(AttendanceInfo todayInfo, AttendanceInfo yesterdayInfo)
         {
             // skip the weekend
-            if ((todayInfo.ArriveTime.DayOfWeek == DayOfWeek.Saturday)
-                || (todayInfo.ArriveTime.DayOfWeek == DayOfWeek.Sunday))
+            if ((todayInfo.Date.DayOfWeek == DayOfWeek.Saturday)
+                || (todayInfo.Date.DayOfWeek == DayOfWeek.Sunday))
             {
-                Trace.WriteLine("skip weekend");
+                todayInfo.State = AttendanceState.PayLeave;
+                Trace.WriteLine("skip weekend: " + todayInfo.Date.ToShortDateString());
+                return;
+            }
+
+            // skip the holiday
+            if (HolidayUtil.IsHoliday(todayInfo.Date))
+            {
+                todayInfo.State = AttendanceState.PayLeave;
+                Trace.WriteLine("skip holiday: " + todayInfo.Date.ToShortDateString());
                 return;
             }
 
@@ -200,7 +213,6 @@ namespace SHANUExcelAddIn.Util
 
             foreach (var nextInfo in unsualInfo)
             {
-
                 checker.GetNextInfo(nextInfo);
 
                 if (checker.IsStateWillChange)

@@ -15,7 +15,7 @@
     <PublishUrl>publish\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.0.0.8</ApplicationVersion>
+    <ApplicationVersion>1.0.0.9</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>7</UpdateInterval>
@@ -218,7 +218,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\AttendanceUtil.cs" />
+    <Compile Include="Util\HolidayUtil.cs" />
     <Compile Include="Util\LeftStateChecker.cs" />
+    <Compile Include="Util\WorkloadUtil.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

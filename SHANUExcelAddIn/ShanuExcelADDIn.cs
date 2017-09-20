@@ -30,7 +30,7 @@ namespace SHANUExcelAddIn
         {
             InitializeComponent();
 
-            
+
         }
 
         private void btnAttendanceException_Click(object sender, EventArgs e)
@@ -379,6 +379,174 @@ namespace SHANUExcelAddIn
                 objRange.Value = string.Empty;
                 objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
             }
+        }
+
+        private void btnWorkLoad_Click(object sender, EventArgs e)
+        {
+            // Turn off screen updating and displaying alerts
+            Globals.ThisAddIn.Application.ScreenUpdating = false;
+            Globals.ThisAddIn.Application.DisplayAlerts = false;
+            Globals.ThisAddIn.Application.AskToUpdateLinks = false;
+
+            try
+            {
+                // get attendance info
+                Excel.Workbook attendanceBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\科技部外包考勤.xls");
+                List<AttendanceInfo> attendanceInfoList = AttendanceUtil.GetAttendanceInfoList(attendanceBook.Worksheets[1]);
+                attendanceBook.Close();
+
+                // get unsual info 
+                List<AttendanceInfo> unsualInfoList = AttendanceUtil.GetUnusalAttendance(attendanceInfoList);
+
+                // Person Repository
+                Excel.Workbook personBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\外包人员台账.xlsx");
+                PersonInfoRepo.GenerateInfoMapByName(personBook);
+                personBook.Close();
+
+                // get workload list
+                List<WorkloadInfo> workloadList = WorkloadUtil.GetWorklaodList(attendanceInfoList, unsualInfoList);
+
+                // write to sheet
+                this.WriteWorkLoad(workloadList, Globals.ThisAddIn.Application.Worksheets[1]);
+            }
+            catch (Exception exp)
+            {
+                MessageBox.Show(exp.ToString());
+
+                throw;
+            }
+
+            // Turn on screen updating and displaying alerts again
+            Globals.ThisAddIn.Application.ScreenUpdating = true;
+            Globals.ThisAddIn.Application.DisplayAlerts = true;
+            Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+        }
+
+        private void WriteWorkLoad(List<WorkloadInfo> workloadList, Excel.Worksheet sheet)
+        {
+            int rowIndex = 1;
+            int colIndex = 1;
+
+            Excel.Range objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "姓名";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "所属公司";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "项目组";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "所属系统";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "主管项目经理";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "所属中心";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "月份";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "应出勤天数";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "实出勤天数";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "结算人月";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "迟到/早退天数";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "备注";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            foreach (var nextInfo in workloadList)
+            {
+                rowIndex++; // from row #2
+                colIndex = 1;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "姓名";
+                objRange.Value = nextInfo.Name;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                PersonInfo personInfo = PersonInfoRepo.GetPersonInfo(nextInfo.Name);
+                if (personInfo == null)
+                {
+                    Debug.Assert(false, nextInfo.Name + " dos not exist");
+                    continue;
+                }
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "所属公司";
+                objRange.Value = personInfo.Company;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "项目组";
+                objRange.Value = personInfo.Project;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "所属系统";
+                objRange.Value = personInfo.System;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "主管项目经理";
+                objRange.Value = personInfo.Manager;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "所属中心";
+                objRange.Value = personInfo.Department;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "月份";
+                objRange.Value = nextInfo.Month.ToString();
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "应出勤天数";
+                objRange.Value = nextInfo.DueShowDays.ToString();
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "实出勤天数";
+                objRange.Value = nextInfo.ActualShowDays.ToString();
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "结算人月";
+                objRange.Value = nextInfo.PayStaffMonth.ToString();
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "迟到/早退天数";
+                objRange.Value = nextInfo.LateDays.ToString();
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "备注";
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            } // foreach (var nextInfo in workloadList)
         }
     }
 }

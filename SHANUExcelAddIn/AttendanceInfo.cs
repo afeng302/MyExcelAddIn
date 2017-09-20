@@ -9,6 +9,7 @@ namespace SHANUExcelAddIn
     enum AttendanceState
     {
         None = 0,
+        PayLeave,   // weekend or holiday
         Late,   // be late or leave early
         Absent, // be absent
         Left,   // has left

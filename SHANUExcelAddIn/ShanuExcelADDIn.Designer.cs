@@ -32,6 +32,8 @@
             this.btnAttendaceExpception = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.btnStaffStatistic = new System.Windows.Forms.Button();
+            this.btnWorkLoad = new System.Windows.Forms.Button();
+            this.btnStatement = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnAttendaceExpception
@@ -40,7 +42,7 @@
             this.btnAttendaceExpception.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnAttendaceExpception.BackgroundImage")));
             this.btnAttendaceExpception.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnAttendaceExpception.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnAttendaceExpception.Font = new System.Drawing.Font("Tahoma", 16F, System.Drawing.FontStyle.Bold);
+            this.btnAttendaceExpception.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAttendaceExpception.ForeColor = System.Drawing.Color.DarkOliveGreen;
             this.btnAttendaceExpception.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnAttendaceExpception.Location = new System.Drawing.Point(3, 89);
@@ -72,22 +74,57 @@
             this.btnStaffStatistic.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnStaffStatistic.Location = new System.Drawing.Point(3, 149);
             this.btnStaffStatistic.Name = "btnStaffStatistic";
-            this.btnStaffStatistic.Size = new System.Drawing.Size(117, 45);
+            this.btnStaffStatistic.Size = new System.Drawing.Size(117, 43);
             this.btnStaffStatistic.TabIndex = 261;
             this.btnStaffStatistic.Text = "人力外包\r\n人员统计";
             this.btnStaffStatistic.UseVisualStyleBackColor = false;
             this.btnStaffStatistic.Click += new System.EventHandler(this.btnStaffStatistic_Click);
+            // 
+            // btnWorkLoad
+            // 
+            this.btnWorkLoad.BackColor = System.Drawing.Color.OliveDrab;
+            this.btnWorkLoad.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnWorkLoad.BackgroundImage")));
+            this.btnWorkLoad.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnWorkLoad.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnWorkLoad.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnWorkLoad.ForeColor = System.Drawing.Color.DarkOliveGreen;
+            this.btnWorkLoad.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnWorkLoad.Location = new System.Drawing.Point(3, 210);
+            this.btnWorkLoad.Name = "btnWorkLoad";
+            this.btnWorkLoad.Size = new System.Drawing.Size(117, 43);
+            this.btnWorkLoad.TabIndex = 262;
+            this.btnWorkLoad.Text = "结算工作量";
+            this.btnWorkLoad.UseVisualStyleBackColor = false;
+            this.btnWorkLoad.Click += new System.EventHandler(this.btnWorkLoad_Click);
+            // 
+            // btnStatement
+            // 
+            this.btnStatement.BackColor = System.Drawing.Color.OliveDrab;
+            this.btnStatement.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnStatement.BackgroundImage")));
+            this.btnStatement.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnStatement.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnStatement.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnStatement.ForeColor = System.Drawing.Color.DarkOliveGreen;
+            this.btnStatement.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnStatement.Location = new System.Drawing.Point(3, 270);
+            this.btnStatement.Name = "btnStatement";
+            this.btnStatement.Size = new System.Drawing.Size(117, 43);
+            this.btnStatement.TabIndex = 263;
+            this.btnStatement.Text = "结算单";
+            this.btnStatement.UseVisualStyleBackColor = false;
             // 
             // ShanuExcelADDIn
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(172)))), ((int)(((byte)(91)))));
+            this.Controls.Add(this.btnStatement);
+            this.Controls.Add(this.btnWorkLoad);
             this.Controls.Add(this.btnStaffStatistic);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnAttendaceExpception);
             this.Name = "ShanuExcelADDIn";
-            this.Size = new System.Drawing.Size(202, 313);
+            this.Size = new System.Drawing.Size(202, 345);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -97,5 +134,7 @@
         private System.Windows.Forms.Button btnAttendaceExpception;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnStaffStatistic;
+        private System.Windows.Forms.Button btnWorkLoad;
+        private System.Windows.Forms.Button btnStatement;
     }
 }

@@ -73,8 +73,10 @@ namespace SHANUExcelAddIn
                 {
                     InfoMap[info.Name] = info;
                 }
+            } // for (rowIndex = 1; rowIndex < 5000; rowIndex++)
 
-            }
+            // correct data and set owner system
+            CorrectData(InfoMap.Values);
         }
 
         public static List<PersonInfo> GetOnsiteOutsourceList()
@@ -108,136 +110,145 @@ namespace SHANUExcelAddIn
                 return info1.Company != null ? info1.Company.CompareTo(info2.Company) : 1;
             });
 
-            // correct department
-            foreach (var nextInfo in outsourceList)
+            return outsourceList;
+        }
+
+        static void CorrectData(ICollection<PersonInfo> personList)
+        {
+            #region correct department
+            foreach (var nextPerson in personList)
             {
-                if (nextInfo.Company != null && nextInfo.Company.Contains("捷科"))
+                if (nextPerson.Company != null && nextPerson.Company.Contains("捷科"))
                 {
-                    nextInfo.Department = "测试中心";
+                    nextPerson.Department = "测试中心";
                     continue;
                 }
 
-                if (nextInfo.Company != null && nextInfo.Company.Contains("江融信"))
+                if (nextPerson.Company != null && nextPerson.Company.Contains("江融信"))
                 {
-                    nextInfo.Department = "开发中心";
+                    nextPerson.Department = "开发中心";
                     continue;
                 }
 
-                if (nextInfo.Project!= null && nextInfo.Project.Contains("大数据"))
+                if (nextPerson.Project != null && nextPerson.Project.Contains("大数据"))
                 {
-                    nextInfo.Department = "大数据中心";
+                    nextPerson.Department = "大数据中心";
                     continue;
                 }
 
-                if (nextInfo.Manager != null && nextInfo.Manager.Contains("张宪杰"))
+                if (nextPerson.Manager != null && nextPerson.Manager.Contains("张宪杰"))
                 {
-                    nextInfo.Department = "大数据中心";
+                    nextPerson.Department = "大数据中心";
                     continue;
                 }
             }
+            #endregion //correct department
 
-            // set owner system
-            foreach (var nextInfo in outsourceList)
+            #region set owner system
+            foreach (var nextPerson in personList)
             {
-                if (string.IsNullOrWhiteSpace(nextInfo.Project))
+                if (nextPerson.Name.Contains("翁国"))
+                {
+                    int ii = 0;
+                }
+
+                if (string.IsNullOrWhiteSpace(nextPerson.Project))
                 {
                     Trace.WriteLine("nextInfo.Project is empty");
                     continue;
                 }
 
                 // 个人信贷系统
-                if (nextInfo.Project.Contains("消费信贷") 
-                    || nextInfo.Project.Contains("操作平台")
-                    || nextInfo.Project.Contains("openapi")
-                    || nextInfo.Project.Contains("信贷核心")
-                    || nextInfo.Project.Contains("资信平台")
-                    || nextInfo.Project.Contains("调度平台"))
+                if (nextPerson.Project.Contains("消费信贷")
+                    || nextPerson.Project.Contains("操作平台")
+                    || nextPerson.Project.Contains("openapi")
+                    || nextPerson.Project.Contains("信贷核心")
+                    || nextPerson.Project.Contains("资信平台")
+                    || nextPerson.Project.Contains("调度平台"))
                 {
-                    nextInfo.System = "个人信贷系统";
+                    nextPerson.System = "个人信贷系统";
                     continue;
                 }
 
                 // 统一支付平台
-                if (nextInfo.Project.Contains("统一支付"))
+                if (nextPerson.Project.Contains("统一支付"))
                 {
-                    nextInfo.System = "统一支付平台";
+                    nextPerson.System = "统一支付平台";
                     continue;
                 }
 
                 // 个人理财系统
-                if (nextInfo.Project.Contains("个人理财"))
+                if (nextPerson.Project.Contains("个人理财"))
                 {
-                    nextInfo.System = "个人理财系统";
+                    nextPerson.System = "个人理财系统";
                     continue;
                 }
 
                 // 开放平台
-                if (nextInfo.Project.Contains("开放平台"))
+                if (nextPerson.Project.Contains("开放平台"))
                 {
-                    nextInfo.System = "开放平台";
+                    nextPerson.System = "开放平台";
                     continue;
                 }
 
                 // 互金平台
-                if (nextInfo.Project.Contains("互联网金融平台")
-                    || nextInfo.Project.Contains("互金平台"))
+                if (nextPerson.Project.Contains("互联网金融平台")
+                    || nextPerson.Project.Contains("互金平台"))
                 {
-                    nextInfo.System = "互金平台";
+                    nextPerson.System = "互金平台";
                     continue;
                 }
 
                 // 对公信贷系统
-                if (nextInfo.Project.Contains("对公信贷"))
+                if (nextPerson.Project.Contains("对公信贷"))
                 {
-                    nextInfo.System = "对公信贷系统";
+                    nextPerson.System = "对公信贷系统";
                     continue;
                 }
 
                 // 客服系统
-                if (nextInfo.Project.Contains("客服"))
+                if (nextPerson.Project.Contains("客服"))
                 {
-                    nextInfo.System = "客服系统";
+                    nextPerson.System = "客服系统";
                     continue;
                 }
 
                 // 渠道类系统（APP，微信）
-                if (nextInfo.Project.Contains("APP")
-                    || nextInfo.Project.Contains("渠道")
-                    || nextInfo.Project.Contains("H5")
-                    || (nextInfo.Project.Contains("微信") && (nextInfo.Manager == "王月超")))
+                if (nextPerson.Project.Contains("APP")
+                    || nextPerson.Project.Contains("渠道")
+                    || nextPerson.Project.Contains("H5")
+                    || (nextPerson.Project.Contains("微信") && (nextPerson.Manager == "王月超")))
                 {
-                    nextInfo.System = "渠道类系统";
+                    nextPerson.System = "渠道类系统";
                     continue;
                 }
 
                 // 财管系统
-                if (nextInfo.Project.Contains("财管")
-                    || nextInfo.Project.Contains("总账"))
+                if (nextPerson.Project.Contains("财管")
+                    || nextPerson.Project.Contains("总账"))
                 {
-                    nextInfo.System = "财管系统";
+                    nextPerson.System = "财管系统";
                     continue;
                 }
 
                 // 促销系统
-                if (nextInfo.Project.Contains("促销"))
+                if (nextPerson.Project.Contains("促销"))
                 {
-                    nextInfo.System = "促销系统";
+                    nextPerson.System = "促销系统";
                     continue;
                 }
 
                 // 大核心银行（含联网核查，电信反诈骗等）
-                if (nextInfo.Project.Contains("核心银行")
-                    || nextInfo.Project.Contains("核心系统")
-                    || nextInfo.Project.Contains("联网核查")
-                    || nextInfo.Project.Contains("电信反诈骗"))
+                if (nextPerson.Project.Contains("核心银行")
+                    || nextPerson.Project.Contains("核心系统")
+                    || nextPerson.Project.Contains("联网核查")
+                    || nextPerson.Project.Contains("电信反诈骗"))
                 {
-                    nextInfo.System = "大核心银行（含联网核查，电信反诈骗等）";
+                    nextPerson.System = "大核心银行（含联网核查，电信反诈骗等）";
                     continue;
                 }
-
-            } // foreach (var nextInfo in outsourceList)
-
-            return outsourceList;
+            }
+            #endregion // set owner system
         }
     }
 }
