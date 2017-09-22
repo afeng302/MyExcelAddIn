@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SHANUExcelAddIn.Util;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,10 +11,10 @@ namespace SHANUExcelAddIn
     {
         None = 0,
         PayLeave,   // weekend or holiday
-        Late,   // be late or leave early
-        Absent, // be absent
-        Left,   // has left
-        NoShow  // no show in the attendance history
+        Late,       // be late or leave early
+        Absent,     // be absent
+        Left,       // has left
+        NoShow      // no show in the attendance history
     }
 
     class AttendanceInfo
@@ -89,6 +90,30 @@ namespace SHANUExcelAddIn
                 }
 
                 return this.LeaveTime - this.ArriveTime;
+            }
+        }
+
+        public int OTHours
+        {
+            get
+            {
+                if (!this.IsValid)
+                {
+                    return 0;
+                }
+
+                // weekend or holiday
+                if ((this.Date.DayOfWeek == DayOfWeek.Saturday)
+                    || (this.Date.DayOfWeek == DayOfWeek.Sunday)
+                    || HolidayUtil.IsHoliday(this.Date))
+                {
+                    return Convert.ToInt32(this.WorkTime.TotalHours);
+                }
+
+                // over 10 hours
+                int hours = Convert.ToInt32((this.WorkTime - new TimeSpan(10, 0, 0)).TotalHours);
+
+                return hours > 0 ? hours : 0;
             }
         }
 

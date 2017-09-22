@@ -18,6 +18,8 @@ namespace SHANUExcelAddIn.Util
         public double PayStaffMonth { get; set; }
 
         public int LateDays { get; set; }
+
+        public int OTHours { get; set; }
     }
 
     static class WorkloadUtil
@@ -89,11 +91,15 @@ namespace SHANUExcelAddIn.Util
         {
             int actualDays = 0;
             int lateDays = 0;
+            int OTHours = 0;
 
             foreach (var nextInfo in attendanceInfoList)
             {
+                // OT hours
+                OTHours += nextInfo.OTHours;
+
                 // actual show days
-                if ((nextInfo.State == AttendanceState.None) || (nextInfo.State == AttendanceState.PayLeave))
+                if (nextInfo.State == AttendanceState.None)
                 {
                     actualDays++;
                     continue;
@@ -108,6 +114,7 @@ namespace SHANUExcelAddIn.Util
 
             workloadInfo.ActualShowDays = actualDays;
             workloadInfo.LateDays = lateDays;
+            workloadInfo.OTHours = OTHours;
 
             // pay staff month
             workloadInfo.PayStaffMonth = Math.Round((double)workloadInfo.ActualShowDays / (double)workloadInfo.DueShowDays, 2);

@@ -472,6 +472,10 @@ namespace SHANUExcelAddIn
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "加班小时数";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
             objRange.Value = "备注";
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
@@ -540,6 +544,11 @@ namespace SHANUExcelAddIn
                 objRange = sheet.Cells[rowIndex, colIndex++];
                 //objRange.Value = "迟到/早退天数";
                 objRange.Value = nextInfo.LateDays.ToString();
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "加班小时数";
+                objRange.Value = nextInfo.OTHours.ToString();
                 objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                 objRange = sheet.Cells[rowIndex, colIndex++];

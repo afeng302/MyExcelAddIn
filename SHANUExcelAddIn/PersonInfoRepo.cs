@@ -147,24 +147,26 @@ namespace SHANUExcelAddIn
             #region set owner system
             foreach (var nextPerson in personList)
             {
-                if (nextPerson.Name.Contains("翁国"))
-                {
-                    int ii = 0;
-                }
-
                 if (string.IsNullOrWhiteSpace(nextPerson.Project))
                 {
                     Trace.WriteLine("nextInfo.Project is empty");
                     continue;
                 }
 
+                // correct "消费信贷（一期）"
+                if (nextPerson.Project.Contains("消费信贷（一期）")
+                    || nextPerson.Project.Contains("消费信贷（二期）"))
+                {
+                    nextPerson.Project = "消费信贷";
+                }
+
                 // 个人信贷系统
                 if (nextPerson.Project.Contains("消费信贷")
-                    || nextPerson.Project.Contains("操作平台")
-                    || nextPerson.Project.Contains("openapi")
-                    || nextPerson.Project.Contains("信贷核心")
-                    || nextPerson.Project.Contains("资信平台")
-                    || nextPerson.Project.Contains("调度平台"))
+                || nextPerson.Project.Contains("操作平台")
+                || nextPerson.Project.Contains("openapi")
+                || nextPerson.Project.Contains("信贷核心")
+                || nextPerson.Project.Contains("资信平台")
+                || nextPerson.Project.Contains("调度平台"))
                 {
                     nextPerson.System = "个人信贷系统";
                     continue;
