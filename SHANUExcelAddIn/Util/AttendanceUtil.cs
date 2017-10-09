@@ -33,7 +33,11 @@ namespace SHANUExcelAddIn.Util
                 string name = srcSheet.Cells[startRowIndex, startColIndex].Value;
                 if (string.IsNullOrWhiteSpace(name))
                 {
-                    break;
+                    if (startRowIndex > 10)
+                    {
+                        break;
+                    }
+                    continue; // the top lines may have some statistic infomation
                 }
 
                 AttendanceInfo todayInfo = new AttendanceInfo(

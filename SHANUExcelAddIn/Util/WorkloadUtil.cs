@@ -24,13 +24,11 @@ namespace SHANUExcelAddIn.Util
 
     static class WorkloadUtil
     {
-        public static List<WorkloadInfo> GetWorklaodList(List<AttendanceInfo> attendanceInfoList,
-            List<AttendanceInfo> unsualInfoList)
+        public static List<WorkloadInfo> GetWorklaodListPerMonth(List<AttendanceInfo> attendanceInfoList)
         {
             Dictionary<string, List<AttendanceInfo>> attendanceNameMap = new Dictionary<string, List<AttendanceInfo>>();
-            Dictionary<string, List<AttendanceInfo>> unsualNameMap = new Dictionary<string, List<AttendanceInfo>>();
 
-            // split by name
+            // group by name
             foreach (var nextInfo in attendanceInfoList)
             {
                 if (!attendanceNameMap.ContainsKey(nextInfo.Name))
@@ -39,20 +37,12 @@ namespace SHANUExcelAddIn.Util
                 }
                 attendanceNameMap[nextInfo.Name].Add(nextInfo);
             }
-            foreach (var nextInfo in unsualInfoList)
-            {
-                if (!unsualNameMap.ContainsKey(nextInfo.Name))
-                {
-                    unsualNameMap.Add(nextInfo.Name, new List<AttendanceInfo>());
-                }
-                unsualNameMap[nextInfo.Name].Add(nextInfo);
-            }
 
             List<WorkloadInfo> workloadInfoList = new List<WorkloadInfo>();
             foreach (var nextName in attendanceNameMap.Keys)
             {
-                // split by month
-                Dictionary<DateTime, List<AttendanceInfo>> monthlyMap = SplitByMonth(attendanceNameMap[nextName]);
+                // group by month
+                Dictionary<DateTime, List<AttendanceInfo>> monthlyMap = GroupByMonth(attendanceNameMap[nextName]);
 
                 foreach (var nextMonth in monthlyMap.Keys)
                 {
@@ -70,7 +60,51 @@ namespace SHANUExcelAddIn.Util
             return workloadInfoList;
         }
 
-        static Dictionary<DateTime, List<AttendanceInfo>> SplitByMonth(List<AttendanceInfo> attendanceInfoList)
+        public static List<WorkloadInfo> GetWorkloadListTotally(List<WorkloadInfo> workloadPerMonth)
+        {
+            Dictionary<string, List<WorkloadInfo>> workloadMap = new Dictionary<string, List<WorkloadInfo>>();
+
+            // group by name
+            foreach (var nextInfo in workloadPerMonth)
+            {
+                if (!workloadMap.ContainsKey(nextInfo.Name))
+                {
+                    workloadMap[nextInfo.Name] = new List<WorkloadInfo>();
+                }
+                workloadMap[nextInfo.Name].Add(nextInfo);
+            }
+
+            // summarize by name
+            List<WorkloadInfo> totalInfo = new List<WorkloadInfo>();
+            foreach (var nextPersonInfoList in workloadMap.Values)
+            {
+                WorkloadInfo firstInfo = nextPersonInfoList.First();
+
+                // to advoid the precision difference after summaried, we round two decimal before sum
+                firstInfo.PayStaffMonth = Math.Round(firstInfo.PayStaffMonth, 2);
+
+                // deduce money by late days (per month)
+                firstInfo.LateDays = firstInfo.LateDays / 3;
+
+                foreach (var nextPersonInfo in nextPersonInfoList)
+                {
+                    if (nextPersonInfo == firstInfo)
+                    {
+                        continue;
+                    }
+                    firstInfo.ActualShowDays += nextPersonInfo.ActualShowDays;
+                    firstInfo.DueShowDays += nextPersonInfo.DueShowDays;
+                    firstInfo.LateDays += (nextPersonInfo.LateDays / 3);
+                    firstInfo.OTHours += nextPersonInfo.OTHours;
+                    firstInfo.PayStaffMonth += Math.Round(nextPersonInfo.PayStaffMonth, 2);
+                }
+                totalInfo.Add(firstInfo);
+            }
+
+            return totalInfo;
+        }
+
+        static Dictionary<DateTime, List<AttendanceInfo>> GroupByMonth(List<AttendanceInfo> attendanceInfoList)
         {
             Dictionary<DateTime, List<AttendanceInfo>> monthlyMap = new Dictionary<DateTime, List<AttendanceInfo>>();
 
@@ -117,7 +151,7 @@ namespace SHANUExcelAddIn.Util
             workloadInfo.OTHours = OTHours;
 
             // pay staff month
-            workloadInfo.PayStaffMonth = Math.Round((double)workloadInfo.ActualShowDays / (double)workloadInfo.DueShowDays, 2);
+            workloadInfo.PayStaffMonth = workloadInfo.ActualShowDays / (double)workloadInfo.DueShowDays;
         }
 
         static Dictionary<DateTime, int> DUE_SHOW_DAYS_MAP = new Dictionary<DateTime, int>();
