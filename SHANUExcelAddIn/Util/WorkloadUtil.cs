@@ -84,7 +84,10 @@ namespace SHANUExcelAddIn.Util
                 firstInfo.PayStaffMonth = Math.Round(firstInfo.PayStaffMonth, 2);
 
                 // deduce money by late days (per month)
-                firstInfo.LateDays = firstInfo.LateDays / 3;
+                if (firstInfo.LateDays >= 3)
+                {
+                    firstInfo.LateDays = (firstInfo.LateDays + 2) / 3;
+                }
 
                 foreach (var nextPersonInfo in nextPersonInfoList)
                 {
@@ -94,7 +97,10 @@ namespace SHANUExcelAddIn.Util
                     }
                     firstInfo.ActualShowDays += nextPersonInfo.ActualShowDays;
                     firstInfo.DueShowDays += nextPersonInfo.DueShowDays;
-                    firstInfo.LateDays += (nextPersonInfo.LateDays / 3);
+                    if (nextPersonInfo.LateDays >= 3)
+                    {
+                        firstInfo.LateDays += ((nextPersonInfo.LateDays + 2) / 3);
+                    }
                     firstInfo.OTHours += nextPersonInfo.OTHours;
                     firstInfo.PayStaffMonth += Math.Round(nextPersonInfo.PayStaffMonth, 2);
                 }
@@ -143,6 +149,7 @@ namespace SHANUExcelAddIn.Util
                 if (nextInfo.State == AttendanceState.Late)
                 {
                     lateDays++;
+                    actualDays++; // be late, but still on show
                 }
             }
 

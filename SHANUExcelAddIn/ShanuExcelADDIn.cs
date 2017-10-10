@@ -43,9 +43,11 @@ namespace SHANUExcelAddIn
 
             try
             {
-                Excel.Worksheet activeSheet = Globals.ThisAddIn.Application.Worksheets[1];
+                Excel.Worksheet activeSheet = Globals.ThisAddIn.Application.ActiveSheet;
 
-                this.DrawHeader(activeSheet);
+                activeSheet.Name = "考勤异常";
+
+                this.DrawUnsualHeader(activeSheet);
 
                 // open files
                 Excel.Workbook attendanceBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\科技部外包考勤.xls");
@@ -82,35 +84,7 @@ namespace SHANUExcelAddIn
             Globals.ThisAddIn.Application.AskToUpdateLinks = true;
         }
 
-        private void btnAddImage_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog dlg = new OpenFileDialog();
-            dlg.FileName = "*";
-            dlg.DefaultExt = "bmp";
-            dlg.ValidateNames = true;
-
-            dlg.Filter = "Bitmap Image (.bmp)|*.bmp|Gif Image (.gif)|*.gif|JPEG Image (.jpeg)|*.jpeg|Png Image (.png)|*.png";
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-
-                Bitmap dImg = new Bitmap(dlg.FileName);
-
-                Excel.Shape IamgeAdd = Globals.ThisAddIn.Application.ActiveSheet.Shapes.AddPicture(dlg.FileName,
-
-        Microsoft.Office.Core.MsoTriState.msoFalse,
-
-        Microsoft.Office.Core.MsoTriState.msoCTrue,
-
-        20, 30, dImg.Width, dImg.Height);
-            }
-
-            //we should also clear the clip board
-
-            System.Windows.Forms.Clipboard.Clear();
-        }
-
-
-        private void DrawHeader(Excel.Worksheet sheet)
+        private void DrawUnsualHeader(Excel.Worksheet sheet)
         {
             int rowIndex = 1;
             int colIndex = 1;
@@ -168,17 +142,17 @@ namespace SHANUExcelAddIn
                 }
 
                 // check if the person has left
-                if (!string.IsNullOrWhiteSpace(personInfo.LeaveDate)
-                    && (personInfo.LeaveDate != "长期"))
-                {
-                    Trace.WriteLine(personInfo.Name + " has left at " + personInfo.LeaveDate);
-                    continue;
-                }
+                //if (!string.IsNullOrWhiteSpace(personInfo.LeaveDate)
+                //    && (personInfo.LeaveDate != "长期"))
+                //{
+                //    Trace.WriteLine(personInfo.Name + " has left at " + personInfo.LeaveDate);
+                //    continue;
+                //}
 
                 rowIndex++; // from row #2
                 colIndex = 1;
 
-                this.WriteAttendanceRow(sheet, rowIndex, colIndex, nextInfo, personInfo);
+                this.WriteUnsualAttendanceRow(sheet, rowIndex, colIndex, nextInfo, personInfo);
             }
 
             // no show list
@@ -190,11 +164,11 @@ namespace SHANUExcelAddIn
                 AttendanceInfo attendanceInfo = new AttendanceInfo(nextInfo.Name, string.Empty, string.Empty, string.Empty);
                 attendanceInfo.State = AttendanceState.NoShow;
 
-                this.WriteAttendanceRow(sheet, rowIndex, colIndex, attendanceInfo, nextInfo);
+                this.WriteUnsualAttendanceRow(sheet, rowIndex, colIndex, attendanceInfo, nextInfo);
             }
         }
 
-        private void WriteAttendanceRow(Excel.Worksheet sheet, int rowIndex, int colIndex,
+        private void WriteUnsualAttendanceRow(Excel.Worksheet sheet, int rowIndex, int colIndex,
             AttendanceInfo attendanceInfo, PersonInfo personInfo)
         {
             Excel.Range objRange = sheet.Cells[rowIndex, colIndex++];
@@ -229,7 +203,7 @@ namespace SHANUExcelAddIn
 
             objRange = sheet.Cells[rowIndex, colIndex++];
             //objRange.Value = "上班打卡时间";
-            if (attendanceInfo.State != AttendanceState.Absent)
+            if (attendanceInfo.State == AttendanceState.Late)
             {
                 objRange.Value = attendanceInfo.ArriveTime.ToShortTimeString();
             }
@@ -237,7 +211,7 @@ namespace SHANUExcelAddIn
 
             objRange = sheet.Cells[rowIndex, colIndex++];
             //objRange.Value = "下班打卡时间";
-            if (attendanceInfo.State != AttendanceState.Absent)
+            if (attendanceInfo.State == AttendanceState.Late)
             {
                 objRange.Value = attendanceInfo.LeaveTime.ToShortTimeString();
             }
@@ -248,13 +222,20 @@ namespace SHANUExcelAddIn
             switch (attendanceInfo.State)
             {
                 case AttendanceState.Late:
-                    objRange.Value = "迟到/早退";
+                    objRange.Value = "迟到";
                     break;
                 case AttendanceState.Absent:
-                    objRange.Value = "旷工";
+                    objRange.Value = "缺勤";
                     break;
                 case AttendanceState.Left:
-                    objRange.Value = "离场？";
+                    if (string.IsNullOrWhiteSpace(personInfo.LeaveDate))
+                    {
+                        objRange.Value = "缺勤-已离场？"; // did not update the status
+                    }
+                    else
+                    {
+                        objRange.Value = "缺勤";
+                    }
                     break;
                 case AttendanceState.NoShow:
                     objRange.Value = "无考勤记录？";
@@ -283,7 +264,7 @@ namespace SHANUExcelAddIn
                 List<PersonInfo> outsourceList = PersonInfoRepo.GetOnsiteOutsourceList();
 
                 // 
-                this.WriteOutsourceInfo(outsourceList, Globals.ThisAddIn.Application.Worksheets[1]);
+                this.WriteOutsourceInfo(outsourceList, Globals.ThisAddIn.Application.ActiveSheet);
             }
             catch (Exception exp)
             {
@@ -438,7 +419,7 @@ namespace SHANUExcelAddIn
 
                 // write to sheet - per month
                 object sheet = Globals.ThisAddIn.Application.Worksheets.Add();
-                Globals.ThisAddIn.Application.ActiveSheet.Name = "月度统计";                
+                Globals.ThisAddIn.Application.ActiveSheet.Name = "月度统计";
                 this.WriteWorkLoadPerMonth(workloadListPerMonth, Globals.ThisAddIn.Application.ActiveSheet);
 
                 // write to sheet - total
@@ -446,7 +427,6 @@ namespace SHANUExcelAddIn
                 Globals.ThisAddIn.Application.ActiveSheet.Name = "汇总统计";
                 List<WorkloadInfo> workloadListTotally = WorkloadUtil.GetWorkloadListTotally(workloadListPerMonth);
                 this.WriteWorkLoadTotally(workloadListTotally, Globals.ThisAddIn.Application.ActiveSheet);
-
             }
             catch (Exception exp)
             {
@@ -510,7 +490,7 @@ namespace SHANUExcelAddIn
             //sheet.Columns[colIndex - 1].Numberformat = "0.00";
 
             objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "迟到/早退天数";
+            objRange.Value = "迟到天数";
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
@@ -692,7 +672,7 @@ namespace SHANUExcelAddIn
                 objRange = sheet.Cells[rowIndex, colIndex++];
                 //objRange.Value = "所属中心";
                 objRange.Value = personInfo.Department;
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;               
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                 objRange = sheet.Cells[rowIndex, colIndex++];
                 //objRange.Value = "结算人月";

@@ -89,7 +89,9 @@ namespace SHANUExcelAddIn
                     return TimeSpan.MinValue;
                 }
 
-                return this.LeaveTime - this.ArriveTime;
+                // 王杰	2017/9/14	9:03:59	18:03:19
+                // add one minute for leave to avoid the second alignment problem
+                return this.LeaveTime.AddMinutes(1) - this.ArriveTime;
             }
         }
 

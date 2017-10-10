@@ -8,6 +8,8 @@ namespace SHANUExcelAddIn.Util
 {
     class LeftStateChecker
     {
+        public const int MAX_ABSENT_DAYS = 22; // when exceed the days will be treated as left
+
         public AttendanceInfo FirstNode { get; private set; }
         
         public AttendanceInfo PreNode { get; private set; }
@@ -32,8 +34,6 @@ namespace SHANUExcelAddIn.Util
             this.NextState = AttendanceState.Absent;
         }
 
-
-
         public void GetNextInfo(AttendanceInfo nextInfo)
         {
             // assert there is no weekend days in the list
@@ -57,11 +57,6 @@ namespace SHANUExcelAddIn.Util
                 this.AbsentDays++;
 
                 return;
-            }
-
-            if (nextInfo.Name == "汤浩然")
-            {
-                int ii = 0;
             }
 
             // date is not continous, reset the points
@@ -98,7 +93,7 @@ namespace SHANUExcelAddIn.Util
             }
 
             // change state to left
-            if ((++this.AbsentDays > 10) && (this.PreState == AttendanceState.Absent))
+            if ((++this.AbsentDays > MAX_ABSENT_DAYS) && (this.PreState == AttendanceState.Absent))
             {
                 this.NextState = AttendanceState.Left;
                 this.NextNode = nextInfo;

@@ -42,12 +42,15 @@ namespace SHANUExcelAddIn.Util
 
                 AttendanceInfo todayInfo = new AttendanceInfo(
                     srcSheet.Cells[startRowIndex, startColIndex].Value,
-                    srcSheet.Cells[startRowIndex, startColIndex + 1].Value, 
+                    srcSheet.Cells[startRowIndex, startColIndex + 1].Value,
                     srcSheet.Cells[startRowIndex, startColIndex + 2].Value,
                     srcSheet.Cells[startRowIndex, startColIndex + 3].Value);
 
                 infoList.Add(todayInfo);
             }
+
+            // pad absent days
+            PadAbsentDays(infoList);
 
             // sort
             infoList.Sort((info1, info2) =>
@@ -118,6 +121,96 @@ namespace SHANUExcelAddIn.Util
             }
 
             return noShowList;
+        }
+
+        /// <summary>
+        /// it is possible for the attandence info has no some days when the person did not punch card at all.
+        /// </summary>
+        /// <param name="infoList"></param>
+        static void PadAbsentDays(List<AttendanceInfo> infoList)
+        {
+            Dictionary<string, List<AttendanceInfo>> nameMap = new Dictionary<string, List<AttendanceInfo>>();
+
+            // sort by date to get the first and last day
+            infoList.Sort((info1, info2) => info1.Date.CompareTo(info2.Date));
+            DateTime firstStatisticDay = infoList.First<AttendanceInfo>().Date;
+            DateTime lastStatisticDay = infoList.Last<AttendanceInfo>().Date;
+
+            // group by name
+            foreach (var nextInfo in infoList)
+            {
+                if (!nameMap.ContainsKey(nextInfo.Name))
+                {
+                    nameMap[nextInfo.Name] = new List<AttendanceInfo>();
+                }
+                nameMap[nextInfo.Name].Add(nextInfo);
+            }
+
+            // pad the absent days
+            List<AttendanceInfo> padInfoList = new List<AttendanceInfo>();
+            foreach (var nextPersonInfoList in nameMap.Values)
+            {
+                // sort by date
+                nextPersonInfoList.Sort((info1, info2) => info1.Date.CompareTo(info2.Date));
+
+                // pad absent days at header
+                AttendanceInfo firstInfo = nextPersonInfoList.First<AttendanceInfo>();
+                DateTime absentDay = firstStatisticDay;
+                while (absentDay != firstInfo.Date)
+                {
+                    // pad absent day
+                    padInfoList.Add(new AttendanceInfo()
+                    {
+                        Name = firstInfo.Name,
+                        Date = absentDay,
+                        State = AttendanceState.Absent
+                    });
+
+                    absentDay = absentDay.AddDays(1);
+                }
+
+                // pad absent days during work days
+                DateTime yesterday = firstInfo.Date;
+                foreach (var nextInfo in nextPersonInfoList)
+                {
+                    if (nextInfo.Date == yesterday)
+                    {
+                        continue; // first day
+                    }
+
+                    while (yesterday.AddDays(1) != nextInfo.Date)
+                    {
+                        // pad absent day
+                        padInfoList.Add(new AttendanceInfo()
+                        {
+                            Name = nextInfo.Name,
+                            Date = yesterday.AddDays(1),
+                            State = AttendanceState.Absent
+                        });
+                        yesterday = yesterday.AddDays(1);
+                    }
+
+                    yesterday = nextInfo.Date;
+                }
+
+                // pad absent days at tail
+                AttendanceInfo lastInfo = nextPersonInfoList.Last<AttendanceInfo>();
+                absentDay = lastInfo.Date;
+                while (absentDay != lastStatisticDay)
+                {
+                    // pad absent day
+                    padInfoList.Add(new AttendanceInfo()
+                    {
+                        Name = lastInfo.Name,
+                        Date = absentDay.AddDays(1),
+                        State = AttendanceState.Absent
+                    });
+                    absentDay = absentDay.AddDays(1);
+                }
+
+            } // foreach (var nextPersonInfoList in nameMap.Values)
+
+            infoList.AddRange(padInfoList);
         }
 
         static void SetAttendanceState(AttendanceInfo todayInfo, AttendanceInfo yesterdayInfo)
@@ -208,7 +301,7 @@ namespace SHANUExcelAddIn.Util
 
         static void SetLeftState4OnePerson(List<AttendanceInfo> unsualInfo)
         {
-            if (unsualInfo.Count < 10)
+            if (unsualInfo.Count < LeftStateChecker.MAX_ABSENT_DAYS)
             {
                 return;
             }
@@ -253,7 +346,7 @@ namespace SHANUExcelAddIn.Util
 
                 if (nextInfo == currNode)
                 {
-                    return; 
+                    return;
                 }
             }
         }
