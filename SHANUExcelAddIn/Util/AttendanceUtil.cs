@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace SHANUExcelAddIn.Util
 {
@@ -87,9 +88,11 @@ namespace SHANUExcelAddIn.Util
                 yesterdayInfo = todayInfo;
             }
 
+            // correct the attendance mistake caused by system problem
+            AttendanceCorrection(attendanceList);
+
             List<AttendanceInfo> unsualInfoList = new List<AttendanceInfo>();
-            attendanceList.ForEach(x
-                =>
+            attendanceList.ForEach(x =>
             {
                 if ((x.State != AttendanceState.None) && (x.State != AttendanceState.PayLeave))
                 {
@@ -349,6 +352,109 @@ namespace SHANUExcelAddIn.Util
                     return;
                 }
             }
+        }
+
+        /// <summary>
+        /// correct the attendance mistake caused by system problem
+        /// </summary>
+        static void AttendanceCorrection(List<AttendanceInfo> attendanceList)
+        {
+            // befor or later than enter and leave date
+            #region // befor or later than enter and leave date
+            foreach (var nextInfo in attendanceList)
+            {
+                PersonInfo personInfo = PersonInfoRepo.GetPersonInfo(nextInfo.Name);
+                DateTime enterDate = DateTime.MinValue;
+                DateTime leaveDate = DateTime.MinValue;
+
+                // enter date
+                try
+                {
+                    enterDate = Convert.ToDateTime(personInfo.EnterDate);
+                }
+                catch (FormatException)
+                {
+                    enterDate = DateTime.MinValue;
+                }
+                catch (Exception exp)
+                {
+                    MessageBox.Show(exp.Message);
+                    return;
+                }
+
+                // leave date
+                try
+                {
+                    leaveDate = Convert.ToDateTime(personInfo.LeaveDate);
+                }
+                catch (FormatException)
+                {
+                    leaveDate = DateTime.MinValue;
+                }
+                catch (Exception exp)
+                {
+                    MessageBox.Show(exp.Message);
+                    return;
+                }
+
+                if ((enterDate != DateTime.MinValue) 
+                    && (nextInfo.Date < enterDate)
+                    && ((nextInfo.State == AttendanceState.None) || (nextInfo.State == AttendanceState.Late)))
+                {
+                    nextInfo.State = AttendanceState.Absent;
+                }
+
+                if ((leaveDate != DateTime.MinValue) 
+                    && (nextInfo.Date > leaveDate)
+                    && ((nextInfo.State == AttendanceState.None) || (nextInfo.State == AttendanceState.Late)))
+                {
+                    nextInfo.State = AttendanceState.Absent;
+                }
+
+            } // foreach (var nextInfo in attendanceList)
+            #endregion // befor or later than enter and leave date
+
+            // 8.31 has no leave time record in system
+            #region 8.31 has no leave time record in system
+            foreach (var nextInfo in attendanceList)
+            {
+                if (nextInfo.Date.Equals(new DateTime(2017, 8, 31)))
+                {
+                    PersonInfo personInfo = PersonInfoRepo.GetPersonInfo(nextInfo.Name);
+                    if (string.IsNullOrWhiteSpace(personInfo.LeaveDate))
+                    {
+                        // correct the status
+                        nextInfo.State = AttendanceState.None;
+                        continue;
+                    }
+
+                    DateTime leaveDate = DateTime.MinValue;
+
+                    try
+                    {
+                        leaveDate = Convert.ToDateTime(personInfo.LeaveDate);
+                    }
+                    catch (FormatException)
+                    {
+                        leaveDate = DateTime.MinValue;
+                    }
+                    catch(Exception exp)
+                    {
+                        MessageBox.Show(exp.Message);
+                        return;
+                    }
+
+                    if (leaveDate < new DateTime(2017, 8, 31))
+                    {
+                        continue; // skip the leave early case
+                    }
+
+                    // correct the status
+                    nextInfo.State = AttendanceState.None;
+
+                } // if (nextInfo.Date.Equals(new DateTime(2017, 8, 31)))
+            } // foreach (var nextInfo in attendanceList)
+            #endregion // 8.31 has no leave time record in system
         }
     }
 }

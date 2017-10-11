@@ -57,13 +57,15 @@ namespace SHANUExcelAddIn
                 // close files
                 attendanceBook.Close();
 
-                // get unsual info 
-                List<AttendanceInfo> unsualInfoList = AttendanceUtil.GetUnusalAttendance(attendanceInfoList);
-
                 // Person Repository
                 Excel.Workbook personBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\外包人员台账.xlsx");
                 PersonInfoRepo.GenerateInfoMapByName(personBook);
                 personBook.Close();
+
+                // get unsual info 
+                List<AttendanceInfo> unsualInfoList = AttendanceUtil.GetUnusalAttendance(attendanceInfoList);
+
+                
 
                 // get no show list
                 List<PersonInfo> outsourceList = PersonInfoRepo.GetOnsiteOutsourceList();
@@ -392,10 +394,6 @@ namespace SHANUExcelAddIn
                 List<AttendanceInfo> attendanceInfoList = AttendanceUtil.GetAttendanceInfoList(attendanceBook.Worksheets[1]);
                 attendanceBook.Close();
 
-                // get unsual info
-                // invoke this method to set the attendance state
-                List<AttendanceInfo> unsualInfoList = AttendanceUtil.GetUnusalAttendance(attendanceInfoList);
-
                 // Person Repository
                 Excel.Workbook personBook = null;
                 if (File.Exists("C:\\data\\外包人员台账.xls"))
@@ -413,6 +411,10 @@ namespace SHANUExcelAddIn
                 }
                 PersonInfoRepo.GenerateInfoMapByName(personBook);
                 personBook.Close();
+
+                // get unsual info
+                // invoke this method to set the attendance state
+                List<AttendanceInfo> unsualInfoList = AttendanceUtil.GetUnusalAttendance(attendanceInfoList);
 
                 // get workload list
                 List<WorkloadInfo> workloadListPerMonth = WorkloadUtil.GetWorklaodListPerMonth(attendanceInfoList);
