@@ -84,9 +84,15 @@ namespace SHANUExcelAddIn.Util
                 firstInfo.PayStaffMonth = Math.Round(firstInfo.PayStaffMonth, 2);
 
                 // deduce money by late days (per month)
+                // we escape the latedays property for absent days in summarizatioin
                 if (firstInfo.LateDays >= 3)
                 {
                     firstInfo.LateDays = (firstInfo.LateDays + 2) / 3;
+                }
+                else
+                {
+                    // reset the late days
+                    firstInfo.LateDays = 0;
                 }
 
                 foreach (var nextPersonInfo in nextPersonInfoList)
