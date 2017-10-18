@@ -271,7 +271,7 @@ namespace SHANUExcelAddIn.Util
                     return;
                 }
 
-                if (yesterdayInfo.WorkTime.Hours + todayInfo.WorkTime.Hours < 20)
+                if (yesterdayInfo.WorkTime.Hours + todayInfo.WorkTime.Hours < 18)
                 {
                     todayInfo.State = AttendanceState.Late;
                     return;
