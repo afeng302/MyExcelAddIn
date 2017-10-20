@@ -49,7 +49,7 @@ namespace SHANUExcelAddIn
             }
 
             // leave later than 24:00
-            if (this.LeaveTime < this.ArriveTime)
+            if ((this.LeaveTime != DateTime.MinValue) && (this.LeaveTime < this.ArriveTime))
             {
                 Trace.WriteLine("leave later than 24:00   [{0}]", leaveTime);
                 this.LeaveTime = this.LeaveTime.AddDays(1);
