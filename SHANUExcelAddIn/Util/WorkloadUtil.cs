@@ -182,14 +182,8 @@ namespace SHANUExcelAddIn.Util
 
             do
             {
-                if ((nextDay.DayOfWeek == DayOfWeek.Saturday)
-                    || (nextDay.DayOfWeek == DayOfWeek.Sunday))
-                {
-                    nextDay = nextDay.AddDays(1);
-                    continue;
-                }
-
-                if (HolidayUtil.IsHoliday(nextDay))
+                // skip the dayoff
+                if (!WorkdayUtil.IsWorkday(nextDay))
                 {
                     nextDay = nextDay.AddDays(1);
                     continue;

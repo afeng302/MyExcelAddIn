@@ -49,8 +49,21 @@ namespace SHANUExcelAddIn
 
                 this.DrawUnsualHeader(activeSheet);
 
-                // open files
-                Excel.Workbook attendanceBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\科技部外包考勤.xls");
+                // get attendance info
+                Excel.Workbook attendanceBook = null;
+                if (File.Exists("C:\\data\\科技部外包考勤.xls"))
+                {
+                    attendanceBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\科技部外包考勤.xls");
+                }
+                else if (File.Exists("C:\\data\\科技部外包考勤.xlsx"))
+                {
+                    attendanceBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\科技部外包考勤.xlsx");
+                }
+                else
+                {
+                    MessageBox.Show("[科技部外包考勤] 文件不存在");
+                    return;
+                }
 
                 List<AttendanceInfo> attendanceInfoList = AttendanceUtil.GetAttendanceInfoList(attendanceBook.Worksheets[1]);
 

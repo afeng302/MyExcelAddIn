@@ -105,9 +105,7 @@ namespace SHANUExcelAddIn
                 }
 
                 // weekend or holiday
-                if ((this.Date.DayOfWeek == DayOfWeek.Saturday)
-                    || (this.Date.DayOfWeek == DayOfWeek.Sunday)
-                    || HolidayUtil.IsHoliday(this.Date))
+                if (!WorkdayUtil.IsWorkday(this.Date))
                 {
                     return Convert.ToInt32(this.WorkTime.TotalHours);
                 }

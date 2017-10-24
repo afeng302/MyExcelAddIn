@@ -37,8 +37,7 @@ namespace SHANUExcelAddIn.Util
         public void GetNextInfo(AttendanceInfo nextInfo)
         {
             // assert there is no weekend days in the list
-            if ((nextInfo.Date.DayOfWeek == DayOfWeek.Saturday)
-                || (nextInfo.Date.DayOfWeek == DayOfWeek.Sunday))
+            if (!WorkdayUtil.IsWorkday(nextInfo.Date))
             {
                 Debug.Assert(false, "there is weekend in the list");
             }

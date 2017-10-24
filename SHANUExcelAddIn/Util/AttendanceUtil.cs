@@ -149,6 +149,18 @@ namespace SHANUExcelAddIn.Util
                 nameMap[nextInfo.Name].Add(nextInfo);
             }
 
+            // check duplicate name in the attendance record
+            int totaldays = 0;
+            foreach (var nextPersonInfoList in nameMap.Values)
+            {
+                totaldays += nextPersonInfoList.Count;
+            }
+            int averageDays = totaldays / nameMap.Count;
+            foreach (var nextName in nameMap.Keys)
+            {
+                Debug.Assert(nameMap[nextName].Count <= averageDays, "there is duplicate names?  " + nextName);
+            }
+
             // pad the absent days
             List<AttendanceInfo> padInfoList = new List<AttendanceInfo>();
             foreach (var nextPersonInfoList in nameMap.Values)
@@ -218,23 +230,13 @@ namespace SHANUExcelAddIn.Util
 
         static void SetAttendanceState(AttendanceInfo todayInfo, AttendanceInfo yesterdayInfo)
         {
-            // skip the weekend
-            if ((todayInfo.Date.DayOfWeek == DayOfWeek.Saturday)
-                || (todayInfo.Date.DayOfWeek == DayOfWeek.Sunday))
+            // skip the dayoff (weeken dand holiday)
+            if (!WorkdayUtil.IsWorkday(todayInfo.Date))
             {
                 todayInfo.State = AttendanceState.PayLeave;
                 Trace.WriteLine("skip weekend: " + todayInfo.Date.ToShortDateString());
                 return;
             }
-
-            // skip the holiday
-            if (HolidayUtil.IsHoliday(todayInfo.Date))
-            {
-                todayInfo.State = AttendanceState.PayLeave;
-                Trace.WriteLine("skip holiday: " + todayInfo.Date.ToShortDateString());
-                return;
-            }
-
 
             // assure the same person
             if ((yesterdayInfo != null) && (yesterdayInfo.Name != todayInfo.Name))
