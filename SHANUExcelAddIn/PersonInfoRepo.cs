@@ -63,10 +63,10 @@ namespace SHANUExcelAddIn
                 info.Department = sheet.Cells[rowIndex, 8].Value;
 
                 // enter date
-                info.EnterDate = sheet.Cells[rowIndex, 10].Value != null ? sheet.Cells[rowIndex, 10].Value.ToString() : null;
+                info.OnboardDate = sheet.Cells[rowIndex, 10].Value != null ? sheet.Cells[rowIndex, 10].Value.ToString() : null;
 
                 // leave date
-                info.LeaveDate = sheet.Cells[rowIndex, 11].Value != null ? sheet.Cells[rowIndex, 11].Value.ToString() : null;
+                info.DimissionDate = sheet.Cells[rowIndex, 11].Value != null ? sheet.Cells[rowIndex, 11].Value.ToString() : null;
 
 
                 lock (InfoMap)
@@ -91,7 +91,7 @@ namespace SHANUExcelAddIn
                     continue;
                 }
 
-                if (!string.IsNullOrWhiteSpace(nextPerson.LeaveDate) && (nextPerson.LeaveDate != "长期"))
+                if (!string.IsNullOrWhiteSpace(nextPerson.DimissionDate) && (nextPerson.DimissionDate != "长期"))
                 {
                     continue;
                 }

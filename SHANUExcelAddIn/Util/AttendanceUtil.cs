@@ -366,17 +366,17 @@ namespace SHANUExcelAddIn.Util
             foreach (var nextInfo in attendanceList)
             {
                 PersonInfo personInfo = PersonInfoRepo.GetPersonInfo(nextInfo.Name);
-                DateTime enterDate = DateTime.MinValue;
-                DateTime leaveDate = DateTime.MinValue;
+                DateTime onboardDate = DateTime.MinValue;
+                DateTime dimissionDate = DateTime.MinValue;
 
                 // enter date
                 try
                 {
-                    enterDate = Convert.ToDateTime(personInfo.EnterDate);
+                    onboardDate = Convert.ToDateTime(personInfo.OnboardDate);
                 }
                 catch (FormatException)
                 {
-                    enterDate = DateTime.MinValue;
+                    onboardDate = DateTime.MinValue;
                 }
                 catch (Exception exp)
                 {
@@ -387,11 +387,11 @@ namespace SHANUExcelAddIn.Util
                 // leave date
                 try
                 {
-                    leaveDate = Convert.ToDateTime(personInfo.LeaveDate);
+                    dimissionDate = Convert.ToDateTime(personInfo.DimissionDate);
                 }
                 catch (FormatException)
                 {
-                    leaveDate = DateTime.MinValue;
+                    dimissionDate = DateTime.MinValue;
                 }
                 catch (Exception exp)
                 {
@@ -399,15 +399,15 @@ namespace SHANUExcelAddIn.Util
                     return;
                 }
 
-                if ((enterDate != DateTime.MinValue) 
-                    && (nextInfo.Date < enterDate)
+                if ((onboardDate != DateTime.MinValue) 
+                    && (nextInfo.Date < onboardDate)
                     && ((nextInfo.State == AttendanceState.None) || (nextInfo.State == AttendanceState.Late)))
                 {
                     nextInfo.State = AttendanceState.Absent;
                 }
 
-                if ((leaveDate != DateTime.MinValue) 
-                    && (nextInfo.Date > leaveDate)
+                if ((dimissionDate != DateTime.MinValue) 
+                    && (nextInfo.Date > dimissionDate)
                     && ((nextInfo.State == AttendanceState.None) || (nextInfo.State == AttendanceState.Late)))
                 {
                     nextInfo.State = AttendanceState.Absent;
@@ -423,22 +423,22 @@ namespace SHANUExcelAddIn.Util
                 if (nextInfo.Date.Equals(new DateTime(2017, 8, 31)))
                 {
                     PersonInfo personInfo = PersonInfoRepo.GetPersonInfo(nextInfo.Name);
-                    if (string.IsNullOrWhiteSpace(personInfo.LeaveDate))
+                    if (string.IsNullOrWhiteSpace(personInfo.DimissionDate))
                     {
                         // correct the status
                         nextInfo.State = AttendanceState.None;
                         continue;
                     }
 
-                    DateTime leaveDate = DateTime.MinValue;
+                    DateTime dimissionDate = DateTime.MinValue;
 
                     try
                     {
-                        leaveDate = Convert.ToDateTime(personInfo.LeaveDate);
+                        dimissionDate = Convert.ToDateTime(personInfo.DimissionDate);
                     }
                     catch (FormatException)
                     {
-                        leaveDate = DateTime.MinValue;
+                        dimissionDate = DateTime.MinValue;
                     }
                     catch(Exception exp)
                     {
@@ -446,7 +446,7 @@ namespace SHANUExcelAddIn.Util
                         return;
                     }
 
-                    if (leaveDate < new DateTime(2017, 8, 31))
+                    if (dimissionDate < new DateTime(2017, 8, 31))
                     {
                         continue; // skip the leave early case
                     }

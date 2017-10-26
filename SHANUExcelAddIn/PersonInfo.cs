@@ -30,9 +30,9 @@ namespace SHANUExcelAddIn
 
         public string System { get; set; }
 
-        public string EnterDate { get; set; }
+        public string OnboardDate { get; set; }
 
-        public string LeaveDate { get; set; }
+        public string DimissionDate { get; set; }
 
         /// <summary>
         /// 外包模式：项目/人力

@@ -243,7 +243,7 @@ namespace SHANUExcelAddIn
                     objRange.Value = "缺勤";
                     break;
                 case AttendanceState.Left:
-                    if (string.IsNullOrWhiteSpace(personInfo.LeaveDate))
+                    if (string.IsNullOrWhiteSpace(personInfo.DimissionDate))
                     {
                         objRange.Value = "缺勤-已离场？"; // did not update the status
                     }
