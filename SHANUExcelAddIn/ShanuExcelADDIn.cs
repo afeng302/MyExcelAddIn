@@ -532,6 +532,7 @@ namespace SHANUExcelAddIn
                 if (personInfo == null)
                 {
                     //Debug.Assert(false, nextInfo.Name + " dos not exist");
+                    Trace.WriteLine("cannot find " + nextInfo.Name);
                     continue;
                 }
 
@@ -661,6 +662,7 @@ namespace SHANUExcelAddIn
                 if (personInfo == null)
                 {
                     //Debug.Assert(false, nextInfo.Name + " dos not exist");
+                    Trace.WriteLine("cannot find " + nextInfo.Name);
                     continue;
                 }
 

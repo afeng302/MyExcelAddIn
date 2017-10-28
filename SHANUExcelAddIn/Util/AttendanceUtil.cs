@@ -365,9 +365,16 @@ namespace SHANUExcelAddIn.Util
             #region // befor or later than enter and leave date
             foreach (var nextInfo in attendanceList)
             {
-                PersonInfo personInfo = PersonInfoRepo.GetPersonInfo(nextInfo.Name);
                 DateTime onboardDate = DateTime.MinValue;
                 DateTime dimissionDate = DateTime.MinValue;
+
+                PersonInfo personInfo = PersonInfoRepo.GetPersonInfo(nextInfo.Name);
+                if (personInfo == null)
+                {
+                    //MessageBox.Show(nextInfo.Name + " 没有台账信息!");
+                    Trace.WriteLine("cannot find " + nextInfo.Name);
+                    continue;
+                }
 
                 // enter date
                 try
@@ -423,6 +430,13 @@ namespace SHANUExcelAddIn.Util
                 if (nextInfo.Date.Equals(new DateTime(2017, 8, 31)))
                 {
                     PersonInfo personInfo = PersonInfoRepo.GetPersonInfo(nextInfo.Name);
+                    if (personInfo == null)
+                    {
+                        //MessageBox.Show(nextInfo.Name + " 没有台账信息!");
+                        Trace.WriteLine("cannot find " + nextInfo.Name);
+                        continue;
+                    }
+
                     if (string.IsNullOrWhiteSpace(personInfo.DimissionDate))
                     {
                         // correct the status
