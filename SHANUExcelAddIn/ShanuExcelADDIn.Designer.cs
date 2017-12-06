@@ -34,6 +34,7 @@
             this.btnStaffStatistic = new System.Windows.Forms.Button();
             this.btnWorkLoad = new System.Windows.Forms.Button();
             this.btnStatement = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnAttendaceExpception
@@ -45,7 +46,7 @@
             this.btnAttendaceExpception.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAttendaceExpception.ForeColor = System.Drawing.Color.DarkOliveGreen;
             this.btnAttendaceExpception.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnAttendaceExpception.Location = new System.Drawing.Point(3, 89);
+            this.btnAttendaceExpception.Location = new System.Drawing.Point(3, 80);
             this.btnAttendaceExpception.Name = "btnAttendaceExpception";
             this.btnAttendaceExpception.Size = new System.Drawing.Size(117, 40);
             this.btnAttendaceExpception.TabIndex = 257;
@@ -59,9 +60,9 @@
             this.label1.Font = new System.Drawing.Font("SimSun", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label1.Location = new System.Drawing.Point(3, 10);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(196, 56);
+            this.label1.Size = new System.Drawing.Size(168, 56);
             this.label1.TabIndex = 260;
-            this.label1.Text = "目录： “C:\\data”\r\n文件： \r\n    “科技部外包考勤.xlsx”\r\n    “外包人员台账.xlsx”\r\n";
+            this.label1.Text = "目录： C:\\data\r\n文件： \r\n    科技部外包考勤.xlsx\r\n    外包人员台账.xlsx";
             // 
             // btnStaffStatistic
             // 
@@ -72,7 +73,7 @@
             this.btnStaffStatistic.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnStaffStatistic.ForeColor = System.Drawing.Color.DarkOliveGreen;
             this.btnStaffStatistic.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnStaffStatistic.Location = new System.Drawing.Point(3, 149);
+            this.btnStaffStatistic.Location = new System.Drawing.Point(3, 137);
             this.btnStaffStatistic.Name = "btnStaffStatistic";
             this.btnStaffStatistic.Size = new System.Drawing.Size(117, 43);
             this.btnStaffStatistic.TabIndex = 261;
@@ -89,7 +90,7 @@
             this.btnWorkLoad.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnWorkLoad.ForeColor = System.Drawing.Color.DarkOliveGreen;
             this.btnWorkLoad.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnWorkLoad.Location = new System.Drawing.Point(3, 210);
+            this.btnWorkLoad.Location = new System.Drawing.Point(3, 195);
             this.btnWorkLoad.Name = "btnWorkLoad";
             this.btnWorkLoad.Size = new System.Drawing.Size(117, 43);
             this.btnWorkLoad.TabIndex = 262;
@@ -106,25 +107,37 @@
             this.btnStatement.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnStatement.ForeColor = System.Drawing.Color.DarkOliveGreen;
             this.btnStatement.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnStatement.Location = new System.Drawing.Point(3, 270);
+            this.btnStatement.Location = new System.Drawing.Point(3, 281);
             this.btnStatement.Name = "btnStatement";
             this.btnStatement.Size = new System.Drawing.Size(117, 43);
             this.btnStatement.TabIndex = 263;
             this.btnStatement.Text = "结算单";
             this.btnStatement.UseVisualStyleBackColor = false;
+            this.btnStatement.Click += new System.EventHandler(this.btnStatement_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("SimSun", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label2.Location = new System.Drawing.Point(1, 256);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(147, 14);
+            this.label2.TabIndex = 264;
+            this.label2.Text = "文件： 人月单价.xlsx";
             // 
             // ShanuExcelADDIn
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(172)))), ((int)(((byte)(91)))));
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.btnStatement);
             this.Controls.Add(this.btnWorkLoad);
             this.Controls.Add(this.btnStaffStatistic);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnAttendaceExpception);
             this.Name = "ShanuExcelADDIn";
-            this.Size = new System.Drawing.Size(202, 345);
+            this.Size = new System.Drawing.Size(176, 337);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -136,5 +149,6 @@
         private System.Windows.Forms.Button btnStaffStatistic;
         private System.Windows.Forms.Button btnWorkLoad;
         private System.Windows.Forms.Button btnStatement;
+        private System.Windows.Forms.Label label2;
     }
 }

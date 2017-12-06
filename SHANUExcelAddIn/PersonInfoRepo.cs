@@ -41,32 +41,35 @@ namespace SHANUExcelAddIn
                 PersonInfo info = new PersonInfo();
 
                 // name
-                info.Name = sheet.Cells[rowIndex, 3].Value;
+                info.Name = Convert.ToString(sheet.Cells[rowIndex, 3].Value);
                 if (string.IsNullOrWhiteSpace(info.Name))
                 {
                     continue;
                 }
 
                 // company
-                info.Company = sheet.Cells[rowIndex, 2].Value;
+                info.Company = Convert.ToString(sheet.Cells[rowIndex, 2].Value);
 
                 // manager
-                info.Manager = sheet.Cells[rowIndex, 4].Value;
+                info.Manager = Convert.ToString(sheet.Cells[rowIndex, 4].Value);
 
                 // project
-                info.Project = sheet.Cells[rowIndex, 5].Value;
+                info.Project = Convert.ToString(sheet.Cells[rowIndex, 5].Value);
 
                 // work type
-                info.WorkType = sheet.Cells[rowIndex, 6].Value;
+                info.WorkType = Convert.ToString(sheet.Cells[rowIndex, 6].Value);
+
+                // Rank - 初、中、高、专家
+                info.Rank = Convert.ToString(sheet.Cells[rowIndex, 7].Value);
 
                 // department
-                info.Department = sheet.Cells[rowIndex, 8].Value;
+                info.Department = Convert.ToString(sheet.Cells[rowIndex, 8].Value);
 
                 // enter date
-                info.OnboardDate = sheet.Cells[rowIndex, 10].Value != null ? sheet.Cells[rowIndex, 10].Value.ToString() : null;
+                info.OnboardDate = Convert.ToString(sheet.Cells[rowIndex, 10].Value); // != null ? sheet.Cells[rowIndex, 10].Value.ToString() : null;
 
                 // leave date
-                info.DimissionDate = sheet.Cells[rowIndex, 11].Value != null ? sheet.Cells[rowIndex, 11].Value.ToString() : null;
+                info.DimissionDate = Convert.ToString(sheet.Cells[rowIndex, 11].Value); // != null ? sheet.Cells[rowIndex, 11].Value.ToString() : null;
 
 
                 lock (InfoMap)

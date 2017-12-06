@@ -78,7 +78,7 @@ namespace SHANUExcelAddIn
                 // get unsual info 
                 List<AttendanceInfo> unsualInfoList = AttendanceUtil.GetUnusalAttendance(attendanceInfoList);
 
-                
+
 
                 // get no show list
                 List<PersonInfo> outsourceList = PersonInfoRepo.GetOnsiteOutsourceList();
@@ -711,6 +711,227 @@ namespace SHANUExcelAddIn
                 objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             } // foreach (var nextInfo in workloadList)
+            #endregion // rows
+        }
+
+        private void btnStatement_Click(object sender, EventArgs e)
+        {
+            // Turn off screen updating and displaying alerts
+            Globals.ThisAddIn.Application.ScreenUpdating = false;
+            Globals.ThisAddIn.Application.DisplayAlerts = false;
+            Globals.ThisAddIn.Application.AskToUpdateLinks = false;
+
+            try
+            {
+                // get price info
+                Excel.Workbook priceBook = null;
+                if (File.Exists("C:\\data\\人月单价.xls"))
+                {
+                    priceBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\人月单价.xls");
+                }
+                else if (File.Exists("C:\\data\\人月单价.xlsx"))
+                {
+                    priceBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\人月单价.xlsx");
+                }
+                else
+                {
+                    MessageBox.Show("[人月单价] 文件不存在");
+                    return;
+                }
+                SettleUtil.GeneratePriceMap(priceBook);
+                priceBook.Close();
+
+                // Person Repository
+                Excel.Workbook personBook = null;
+                if (File.Exists("C:\\data\\外包人员台账.xls"))
+                {
+                    personBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\外包人员台账.xls");
+                }
+                else if (File.Exists("C:\\data\\外包人员台账.xlsx"))
+                {
+                    personBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\外包人员台账.xlsx");
+                }
+                else
+                {
+                    MessageBox.Show("[外包人员台账] 文件不存在");
+                    return;
+                }
+                PersonInfoRepo.GenerateInfoMapByName(personBook);
+                personBook.Close();
+
+                // select workload file
+                OpenFileDialog dlg = new OpenFileDialog();
+                dlg.Title = "请选择结算工作量文件";
+                dlg.Filter = "excel文件|*.xlsx";
+                dlg.RestoreDirectory = true;
+                if (dlg.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+                Excel.Workbook book = Globals.ThisAddIn.Application.Workbooks.Open(dlg.FileName);
+                SettleUtil.GenerateWorkLoadMap(book);
+                book.Close();
+
+                // select performance file
+                dlg.Title = "请选择绩效考核文件";
+                dlg.Filter = "excel文件|*.xlsx";
+                dlg.RestoreDirectory = true;
+                if (dlg.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+                book = Globals.ThisAddIn.Application.Workbooks.Open(dlg.FileName);
+                SettleUtil.GeneratePerformanceMap(book);
+                book.Close();
+
+                // write to sheet
+                object sheet = Globals.ThisAddIn.Application.Worksheets.Add();
+                Globals.ThisAddIn.Application.ActiveSheet.Name = "结算单";
+                WriteFinalSettlement(Globals.ThisAddIn.Application.ActiveSheet);
+            }
+            catch (Exception exp)
+            {
+                MessageBox.Show(exp.ToString());
+                throw;
+            }
+
+            // Turn on screen updating and displaying alerts again
+            Globals.ThisAddIn.Application.ScreenUpdating = true;
+            Globals.ThisAddIn.Application.DisplayAlerts = true;
+            Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+        }
+
+        private void WriteFinalSettlement(Excel.Worksheet sheet)
+        {
+            int rowIndex = 1;
+            int colIndex = 1;
+
+            #region header
+            Excel.Range objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "序号";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "公司名称";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "参与项目名称";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "所属中心";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "人员姓名";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "人员级别";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "单价：元/月";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "绩效系数";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "项目经理";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "数量：月";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "结算金额：元";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            #endregion // header
+
+            #region rows
+            List<string> nameList = SettleUtil.GetNameList();
+            foreach (var nextName in nameList)
+            {
+                rowIndex++; // from row #2
+                colIndex = 1;
+
+                PersonInfo personInfo = PersonInfoRepo.GetPersonInfo(nextName);
+                if (personInfo == null)
+                {
+                    //Debug.Assert(false, nextInfo.Name + " dos not exist");
+                    Trace.WriteLine("cannot find " + nextName);
+                    continue;
+                }
+
+                double unitPrice = 0;
+                double workLoad = 0;
+                double performance = 0;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "序号";
+                objRange.Value = string.Empty;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "公司名称";
+                objRange.Value = personInfo.Company;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "参与项目名称";
+                objRange.Value = string.IsNullOrWhiteSpace(personInfo.System) ? personInfo.Project : personInfo.System;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "所属中心";
+                objRange.Value = personInfo.Department;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "人员姓名";
+                objRange.Value = personInfo.Name;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "人员级别";
+                objRange.Value = personInfo.Rank;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "单价：元/月";
+                unitPrice = SettleUtil.GetUnitPrice(personInfo.Company,
+                    personInfo.Department.Contains("测试") ? "测试" : "开发",
+                    personInfo.Rank);
+                objRange.Value = unitPrice;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "绩效系数";
+                performance = SettleUtil.GetPerformance(nextName);
+                objRange.Value = performance;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "项目经理";
+                objRange.Value = personInfo.Manager;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "数量：月";
+                workLoad = SettleUtil.GetSettlementMonth(personInfo.Name);
+                objRange.Value = workLoad;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "结算金额：元";
+                objRange.Value = string.Format("{0:0.00}", unitPrice * 10000 * performance * workLoad);
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            } // foreach (var nextName in nameList)
             #endregion // rows
         }
     }
