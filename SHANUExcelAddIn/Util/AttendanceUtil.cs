@@ -361,7 +361,60 @@ namespace SHANUExcelAddIn.Util
         /// </summary>
         static void AttendanceCorrection(List<AttendanceInfo> attendanceList)
         {
+            // 8.31 has no leave time record in system
+            #region 8.31 has no leave time record in system
+            foreach (var nextInfo in attendanceList)
+            {
+                if (nextInfo.Date.Equals(new DateTime(2017, 8, 31)))
+                {
+                    PersonInfo personInfo = PersonInfoRepo.GetPersonInfo(nextInfo.Name);
+                    if (personInfo == null)
+                    {
+                        //MessageBox.Show(nextInfo.Name + " 没有台账信息!");
+                        Trace.WriteLine("cannot find " + nextInfo.Name);
+                        continue;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(personInfo.DimissionDate))
+                    {
+                        // correct the status
+                        nextInfo.State = AttendanceState.None;
+                        continue;
+                    }
+
+                    DateTime dimissionDate = DateTime.MinValue;
+
+                    try
+                    {
+                        dimissionDate = Convert.ToDateTime(personInfo.DimissionDate);
+                    }
+                    catch (FormatException)
+                    {
+                        dimissionDate = DateTime.MinValue;
+                    }
+                    catch (Exception exp)
+                    {
+                        MessageBox.Show(exp.Message);
+                        return;
+                    }
+
+                    if (dimissionDate < new DateTime(2017, 8, 31))
+                    {
+                        continue; // skip the leave early case
+                    }
+
+                    // correct the status
+                    nextInfo.State = AttendanceState.None;
+
+                } // if (nextInfo.Date.Equals(new DateTime(2017, 8, 31)))
+            } // foreach (var nextInfo in attendanceList)
+            #endregion // 8.31 has no leave time record in system
+
+
+            //
             // befor or later than enter and leave date
+            // always put this rule in the last
+            // 
             #region // befor or later than enter and leave date
             foreach (var nextInfo in attendanceList)
             {
@@ -422,55 +475,6 @@ namespace SHANUExcelAddIn.Util
 
             } // foreach (var nextInfo in attendanceList)
             #endregion // befor or later than enter and leave date
-
-            // 8.31 has no leave time record in system
-            #region 8.31 has no leave time record in system
-            foreach (var nextInfo in attendanceList)
-            {
-                if (nextInfo.Date.Equals(new DateTime(2017, 8, 31)))
-                {
-                    PersonInfo personInfo = PersonInfoRepo.GetPersonInfo(nextInfo.Name);
-                    if (personInfo == null)
-                    {
-                        //MessageBox.Show(nextInfo.Name + " 没有台账信息!");
-                        Trace.WriteLine("cannot find " + nextInfo.Name);
-                        continue;
-                    }
-
-                    if (string.IsNullOrWhiteSpace(personInfo.DimissionDate))
-                    {
-                        // correct the status
-                        nextInfo.State = AttendanceState.None;
-                        continue;
-                    }
-
-                    DateTime dimissionDate = DateTime.MinValue;
-
-                    try
-                    {
-                        dimissionDate = Convert.ToDateTime(personInfo.DimissionDate);
-                    }
-                    catch (FormatException)
-                    {
-                        dimissionDate = DateTime.MinValue;
-                    }
-                    catch(Exception exp)
-                    {
-                        MessageBox.Show(exp.Message);
-                        return;
-                    }
-
-                    if (dimissionDate < new DateTime(2017, 8, 31))
-                    {
-                        continue; // skip the leave early case
-                    }
-
-                    // correct the status
-                    nextInfo.State = AttendanceState.None;
-
-                } // if (nextInfo.Date.Equals(new DateTime(2017, 8, 31)))
-            } // foreach (var nextInfo in attendanceList)
-            #endregion // 8.31 has no leave time record in system
         }
     }
 }
