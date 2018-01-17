@@ -6,11 +6,11 @@ using System.Text;
 
 namespace SHANUExcelAddIn.Util
 {
-    class LeftStateChecker
+    class DismissionChecker
     {
         public const int MAX_ABSENT_DAYS = 22; // when exceed the days will be treated as left
 
-        public AttendanceInfo FirstNode { get; private set; }
+        public AttendanceInfo FirstAbsentNode { get; private set; }
         
         public AttendanceInfo PreNode { get; private set; }
 
@@ -22,9 +22,9 @@ namespace SHANUExcelAddIn.Util
 
         public AttendanceState NextState { get; private set; }
 
-        public LeftStateChecker(AttendanceInfo firstNode)
+        public DismissionChecker(AttendanceInfo firstNode)
         {
-            this.FirstNode = firstNode;
+            this.FirstAbsentNode = firstNode;
             this.PreNode = firstNode;
 
             this.AbsentDays = 0;
@@ -62,7 +62,7 @@ namespace SHANUExcelAddIn.Util
             if ((nextInfo.Date.DayOfWeek == DayOfWeek.Monday)
                 && (nextInfo.Date.DayOfYear - this.PreNode.Date.DayOfYear > 3))
             {
-                if (this.PreState == AttendanceState.Left)
+                if (this.PreState == AttendanceState.Dimission)
                 {
                     // change to absent
                     this.NextState = AttendanceState.Absent;
@@ -78,7 +78,7 @@ namespace SHANUExcelAddIn.Util
             if ((nextInfo.Date.DayOfWeek != DayOfWeek.Monday)
                && (nextInfo.Date.DayOfYear - this.PreNode.Date.DayOfYear > 1))
             {
-                if (this.PreState == AttendanceState.Left)
+                if (this.PreState == AttendanceState.Dimission)
                 {
                     // change to absent
                     this.NextState = AttendanceState.Absent;
@@ -94,7 +94,7 @@ namespace SHANUExcelAddIn.Util
             // change state to left
             if ((++this.AbsentDays > MAX_ABSENT_DAYS) && (this.PreState == AttendanceState.Absent))
             {
-                this.NextState = AttendanceState.Left;
+                this.NextState = AttendanceState.Dimission;
                 this.NextNode = nextInfo;
             }
 
@@ -106,7 +106,7 @@ namespace SHANUExcelAddIn.Util
             this.AbsentDays = 0;
 
             this.PreNode = currNode;
-            this.FirstNode = currNode;
+            this.FirstAbsentNode = currNode;
 
             this.PreState = AttendanceState.Absent;
 

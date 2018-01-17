@@ -220,7 +220,7 @@
     <Compile Include="Util\AttendanceUtil.cs" />
     <Compile Include="Util\SettleUtil.cs" />
     <Compile Include="Util\WorkdayUtil.cs" />
-    <Compile Include="Util\LeftStateChecker.cs" />
+    <Compile Include="Util\DismissionChecker.cs" />
     <Compile Include="Util\WorkloadUtil.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

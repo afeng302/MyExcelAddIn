@@ -13,11 +13,17 @@ namespace SHANUExcelAddIn.Util
 
         public int DueShowDays { get; set; }
 
-        public int ActualShowDays { get; set; }
+        public double ActualShowDays { get; set; }
 
         public double PayStaffMonth { get; set; }
 
-        public int LateDays { get; set; }
+        public int AbsentDays { get; set; }
+
+        public int LateTimes { get; set; }
+
+        public int LeaveTimes { get; set; }
+
+        public int AdditionalRecordTimes { get; set; }
 
         public int OTHours { get; set; }
     }
@@ -85,14 +91,14 @@ namespace SHANUExcelAddIn.Util
 
                 // deduce money by late days (per month)
                 // we escape the latedays property for absent days in summarizatioin
-                if (firstInfo.LateDays >= 3)
+                if (firstInfo.LateTimes >= 3)
                 {
-                    firstInfo.LateDays = (firstInfo.LateDays + 2) / 3;
+                    firstInfo.LateTimes = (firstInfo.LateTimes + 2) / 3;
                 }
                 else
                 {
                     // reset the late days
-                    firstInfo.LateDays = 0;
+                    firstInfo.LateTimes = 0;
                 }
 
                 foreach (var nextPersonInfo in nextPersonInfoList)
@@ -103,9 +109,9 @@ namespace SHANUExcelAddIn.Util
                     }
                     firstInfo.ActualShowDays += nextPersonInfo.ActualShowDays;
                     firstInfo.DueShowDays += nextPersonInfo.DueShowDays;
-                    if (nextPersonInfo.LateDays >= 3)
+                    if (nextPersonInfo.LateTimes >= 3)
                     {
-                        firstInfo.LateDays += ((nextPersonInfo.LateDays + 2) / 3);
+                        firstInfo.LateTimes += ((nextPersonInfo.LateTimes + 2) / 3);
                     }
                     firstInfo.OTHours += nextPersonInfo.OTHours;
                     firstInfo.PayStaffMonth += Math.Round(nextPersonInfo.PayStaffMonth, 2);
@@ -135,8 +141,10 @@ namespace SHANUExcelAddIn.Util
 
         static void SetWorkloadInfo(WorkloadInfo workloadInfo, List<AttendanceInfo> attendanceInfoList)
         {
-            int actualDays = 0;
-            int lateDays = 0;
+            double actualDays = 0;
+            int lateTimes = 0;
+            int leaveTimes = 0;
+            int additionalRecordTimes = 0;
             int OTHours = 0;
 
             foreach (var nextInfo in attendanceInfoList)
@@ -144,23 +152,33 @@ namespace SHANUExcelAddIn.Util
                 // OT hours
                 OTHours += nextInfo.OTHours;
 
-                // actual show days
-                if (nextInfo.State == AttendanceState.None)
-                {
-                    actualDays++;
-                    continue;
-                }
+                // actural show days
+                actualDays += nextInfo.WorkDay;
 
-                // late days
+                // late times
                 if (nextInfo.State == AttendanceState.Late)
                 {
-                    lateDays++;
-                    actualDays++; // be late, but still on show
+                    lateTimes++;
+                }
+
+                // leave times
+                if (nextInfo.State == AttendanceState.Leave)
+                {
+                    leaveTimes++;
+                }
+
+                // additional record times
+                if ((nextInfo.State == AttendanceState.AdditionalRecord)
+                    || (nextInfo.State == AttendanceState.AdditionalRecord_Ticket))
+                {
+                    additionalRecordTimes++;
                 }
             }
 
             workloadInfo.ActualShowDays = actualDays;
-            workloadInfo.LateDays = lateDays;
+            workloadInfo.LateTimes = lateTimes;
+            workloadInfo.LeaveTimes = leaveTimes;
+            workloadInfo.AdditionalRecordTimes = additionalRecordTimes;
             workloadInfo.OTHours = OTHours;
 
             // pay staff month
@@ -198,25 +216,25 @@ namespace SHANUExcelAddIn.Util
             return days;
         }
 
-        static void CalcActualDay(List<AttendanceInfo> unsualList, out int absentDays, out int lateDays)
-        {
-            absentDays = 0;
-            lateDays = 0;
+        //static void CalcActualDay(List<AttendanceInfo> unsualList, out int absentDays, out int lateDays)
+        //{
+        //    absentDays = 0;
+        //    lateDays = 0;
 
-            foreach (var nextInfo in unsualList)
-            {
-                if ((nextInfo.State == AttendanceState.Absent)
-                    || (nextInfo.State == AttendanceState.Left)
-                    || (nextInfo.State == AttendanceState.NoShow))
-                {
-                    absentDays++;
-                }
+        //    foreach (var nextInfo in unsualList)
+        //    {
+        //        if ((nextInfo.State == AttendanceState.Absent)
+        //            || (nextInfo.State == AttendanceState.Dimission)
+        //            || (nextInfo.State == AttendanceState.NoShow))
+        //        {
+        //            absentDays++;
+        //        }
 
-                if (nextInfo.State == AttendanceState.Late)
-                {
-                    lateDays++;
-                }
-            }
-        }
+        //        if (nextInfo.State == AttendanceState.Late)
+        //        {
+        //            lateDays++;
+        //        }
+        //    }
+        //}
     }
 }

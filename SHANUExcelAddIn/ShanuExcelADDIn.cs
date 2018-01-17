@@ -78,8 +78,6 @@ namespace SHANUExcelAddIn
                 // get unsual info 
                 List<AttendanceInfo> unsualInfoList = AttendanceUtil.GetUnusalAttendance(attendanceInfoList);
 
-
-
                 // get no show list
                 List<PersonInfo> outsourceList = PersonInfoRepo.GetOnsiteOutsourceList();
                 List<PersonInfo> noShowList = AttendanceUtil.GetNoShowPersonList(outsourceList, attendanceInfoList);
@@ -137,17 +135,25 @@ namespace SHANUExcelAddIn
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "结算人天";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
             objRange.Value = "备注";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "Debug";
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
         }
 
-        private void WriteUnsualInfo(List<AttendanceInfo> attendanceInfoList, List<PersonInfo> noShowList, Excel.Worksheet sheet)
+        private void WriteUnsualInfo(List<AttendanceInfo> unsualInfoList, List<PersonInfo> noShowList, Excel.Worksheet sheet)
         {
             int rowIndex = 1;
             int colIndex = 1;
 
             // unsual attendance
-            foreach (var nextInfo in attendanceInfoList)
+            foreach (var nextInfo in unsualInfoList)
             {
                 PersonInfo personInfo = PersonInfoRepo.GetPersonInfo(nextInfo.Name);
                 if (personInfo == null)
@@ -168,7 +174,8 @@ namespace SHANUExcelAddIn
                 colIndex = 1;
 
                 this.WriteUnsualAttendanceRow(sheet, rowIndex, colIndex, nextInfo, personInfo);
-            }
+
+            } // foreach (var nextInfo in unsualInfoList)
 
             // no show list
             foreach (var nextInfo in noShowList)
@@ -176,11 +183,12 @@ namespace SHANUExcelAddIn
                 rowIndex++;
                 colIndex = 1;
 
-                AttendanceInfo attendanceInfo = new AttendanceInfo(nextInfo.Name, string.Empty, string.Empty, string.Empty);
+                AttendanceInfo attendanceInfo = new AttendanceInfo(nextInfo.Name, string.Empty, string.Empty, string.Empty, string.Empty);
                 attendanceInfo.State = AttendanceState.NoShow;
 
                 this.WriteUnsualAttendanceRow(sheet, rowIndex, colIndex, attendanceInfo, nextInfo);
-            }
+
+            } // foreach (var nextInfo in noShowList)
         }
 
         private void WriteUnsualAttendanceRow(Excel.Worksheet sheet, int rowIndex, int colIndex,
@@ -218,7 +226,7 @@ namespace SHANUExcelAddIn
 
             objRange = sheet.Cells[rowIndex, colIndex++];
             //objRange.Value = "上班打卡时间";
-            if (attendanceInfo.State == AttendanceState.Late)
+            if (attendanceInfo.ArriveTime != DateTime.MinValue)
             {
                 objRange.Value = attendanceInfo.ArriveTime.ToShortTimeString();
             }
@@ -226,10 +234,15 @@ namespace SHANUExcelAddIn
 
             objRange = sheet.Cells[rowIndex, colIndex++];
             //objRange.Value = "下班打卡时间";
-            if (attendanceInfo.State == AttendanceState.Late)
+            if (attendanceInfo.LeaveTime != DateTime.MinValue)
             {
                 objRange.Value = attendanceInfo.LeaveTime.ToShortTimeString();
             }
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            //objRange.Value = "结算人天";
+            objRange.Value = attendanceInfo.WorkDay.ToString();
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
@@ -240,24 +253,38 @@ namespace SHANUExcelAddIn
                     objRange.Value = "迟到";
                     break;
                 case AttendanceState.Absent:
-                    objRange.Value = "缺勤";
+                    objRange.Value = "旷工";
                     break;
-                case AttendanceState.Left:
+                case AttendanceState.Leave:
+                    objRange.Value = "请假";
+                    break;
+                case AttendanceState.AdditionalRecord:
+                    objRange.Value = "补录";
+                    break;
+                case AttendanceState.Dimission:
                     if (string.IsNullOrWhiteSpace(personInfo.DimissionDate))
                     {
-                        objRange.Value = "缺勤-已离场？"; // did not update the status
+                        objRange.Value = "未办理离场手续"; // did not update the status
                     }
                     else
                     {
-                        objRange.Value = "缺勤";
+                        objRange.Value = "已离场";
                     }
                     break;
+                case AttendanceState.NotOnboard:
+                    objRange.Value = "未入场";
+                    break;
                 case AttendanceState.NoShow:
-                    objRange.Value = "无考勤记录？";
+                    objRange.Value = "无考勤记录";
                     break;
                 default:
                     break;
             }
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            //objRange.Value = "Debug";
+            objRange.Value = attendanceInfo.State.ToString();
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
         }
 
@@ -583,7 +610,7 @@ namespace SHANUExcelAddIn
 
                 objRange = sheet.Cells[rowIndex, colIndex++];
                 //objRange.Value = "迟到/早退天数";
-                objRange.Value = nextInfo.LateDays.ToString();
+                objRange.Value = nextInfo.LateTimes.ToString();
                 objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                 objRange = sheet.Cells[rowIndex, colIndex++];
@@ -698,7 +725,7 @@ namespace SHANUExcelAddIn
 
                 objRange = sheet.Cells[rowIndex, colIndex++];
                 //objRange.Value = "迟到折算旷工天数";
-                objRange.Value = nextInfo.LateDays.ToString();
+                objRange.Value = nextInfo.LateTimes.ToString();
                 objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                 objRange = sheet.Cells[rowIndex, colIndex++];
