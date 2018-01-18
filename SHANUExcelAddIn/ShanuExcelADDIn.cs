@@ -142,9 +142,9 @@ namespace SHANUExcelAddIn
             objRange.Value = "备注";
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-            objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "Debug";
-            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            //objRange = sheet.Cells[rowIndex, colIndex++];
+            //objRange.Value = "Debug";
+            //objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
         }
 
         private void WriteUnsualInfo(List<AttendanceInfo> unsualInfoList, List<PersonInfo> noShowList, Excel.Worksheet sheet)
@@ -284,8 +284,8 @@ namespace SHANUExcelAddIn
 
             objRange = sheet.Cells[rowIndex, colIndex++];
             //objRange.Value = "Debug";
-            objRange.Value = attendanceInfo.State.ToString();
-            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            //objRange.Value = attendanceInfo.State.ToString();
+            //objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
         }
 
         private void btnStaffStatistic_Click(object sender, EventArgs e)

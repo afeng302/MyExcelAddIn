@@ -160,9 +160,10 @@ namespace SHANUExcelAddIn
                     case AttendanceState.Normal:
                     case AttendanceState.Late:
                         return 1;   // the late will be fined sepately (if more than 3 times per month)
-                    case AttendanceState.Leave:
                     case AttendanceState.AdditionalRecord:
                     case AttendanceState.AdditionalRecord_Ticket:
+                        return 1;   // always settle as a normal day
+                    case AttendanceState.Leave:                    
                         {
                             if (this.WorkTime.TotalHours > 9.0)
                             {
