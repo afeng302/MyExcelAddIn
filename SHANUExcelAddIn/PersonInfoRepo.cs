@@ -165,11 +165,10 @@ namespace SHANUExcelAddIn
 
                 // 个人信贷系统
                 if (nextPerson.Project.Contains("消费信贷")
-                || nextPerson.Project.Contains("操作平台")
-                || nextPerson.Project.Contains("openapi")
-                || nextPerson.Project.Contains("信贷核心")
-                || nextPerson.Project.Contains("资信平台")
-                || nextPerson.Project.Contains("调度平台"))
+                    || nextPerson.Project.Contains("操作平台")
+                    || nextPerson.Project.Contains("信贷核心")
+                    || nextPerson.Project.Contains("资信平台")
+                    || nextPerson.Project.Contains("调度平台"))
                 {
                     nextPerson.System = "个人信贷系统";
                     continue;
@@ -190,7 +189,8 @@ namespace SHANUExcelAddIn
                 }
 
                 // 开放平台
-                if (nextPerson.Project.Contains("开放平台"))
+                if (nextPerson.Project.Contains("开放平台")
+                    || (nextPerson.Project.Contains("渠道") && nextPerson.Project.Contains("H5")))
                 {
                     nextPerson.System = "开放平台";
                     continue;
@@ -220,9 +220,10 @@ namespace SHANUExcelAddIn
 
                 // 渠道类系统（APP，微信）
                 if (nextPerson.Project.Contains("APP")
-                    || nextPerson.Project.Contains("渠道")
-                    || nextPerson.Project.Contains("H5")
-                    || (nextPerson.Project.Contains("微信") && (nextPerson.Manager == "王月超")))
+                    || (nextPerson.Project.Contains("微信") && (nextPerson.Manager == "王月超"))
+                    || (nextPerson.Project.Contains("Open") && nextPerson.Project.Contains("API"))
+                    || (nextPerson.Project.Contains("渠道") && nextPerson.Project.Contains("API"))
+                    || (nextPerson.Project.Contains("电子银行渠道") && (nextPerson.Manager == "杨嘉")))
                 {
                     nextPerson.System = "渠道类系统";
                     continue;
@@ -249,7 +250,7 @@ namespace SHANUExcelAddIn
                     || nextPerson.Project.Contains("联网核查")
                     || nextPerson.Project.Contains("电信反诈骗"))
                 {
-                    nextPerson.System = "大核心银行（含联网核查，电信反诈骗等）";
+                    nextPerson.System = "大核心银行";
                     continue;
                 }
             }

@@ -532,7 +532,7 @@ namespace SHANUExcelAddIn
             //sheet.Columns[colIndex - 1].Numberformat = "0.00";
 
             objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "迟到天数";
+            objRange.Value = "迟到次数";
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
