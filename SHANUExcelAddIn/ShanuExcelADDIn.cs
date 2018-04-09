@@ -75,6 +75,9 @@ namespace SHANUExcelAddIn
                 PersonInfoRepo.GenerateInfoMapByName(personBook);
                 personBook.Close();
 
+                // filter out dissmissed person
+                AttendanceUtil.FilteroutDissmissedPerson(attendanceInfoList);
+
                 // get unsual info 
                 List<AttendanceInfo> unsualInfoList = AttendanceUtil.GetUnusalAttendance(attendanceInfoList);
 
@@ -451,6 +454,9 @@ namespace SHANUExcelAddIn
                 }
                 PersonInfoRepo.GenerateInfoMapByName(personBook);
                 personBook.Close();
+
+                // filter out dissmissed person
+                AttendanceUtil.FilteroutDissmissedPerson(attendanceInfoList);
 
                 // get unsual info
                 // invoke this method to set the attendance state
@@ -859,7 +865,7 @@ namespace SHANUExcelAddIn
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "单价：元/月";
+            objRange.Value = "单价：元/人月";
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
@@ -871,7 +877,7 @@ namespace SHANUExcelAddIn
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "数量：月";
+            objRange.Value = "数量：人月";
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];

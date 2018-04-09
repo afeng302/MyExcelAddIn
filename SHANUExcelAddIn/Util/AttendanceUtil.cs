@@ -147,6 +147,75 @@ namespace SHANUExcelAddIn.Util
             return noShowList;
         }
 
+        public static void FilteroutDissmissedPerson(List<AttendanceInfo> infoList)
+        {
+            // sort by date to get the first and last day
+            infoList.Sort((info1, info2) => info1.Date.CompareTo(info2.Date));
+            DateTime firstStatisticDay = infoList.First<AttendanceInfo>().Date;
+            DateTime lastStatisticDay = infoList.Last<AttendanceInfo>().Date;
+
+            // get dissmissed person set
+            HashSet<string> dissmissedPersonSet = new HashSet<string>();
+            foreach (var nextInfo in infoList)
+            {
+                if (!string.IsNullOrEmpty(nextInfo.Name) && !dissmissedPersonSet.Contains(nextInfo.Name))
+                {
+                    dissmissedPersonSet.Add(nextInfo.Name);
+                }
+            }
+            foreach (var nextPerson in dissmissedPersonSet.ToList())
+            {
+                PersonInfo personInfo = PersonInfoRepo.GetPersonInfo(nextPerson);
+                // check dismission date
+                DateTime dimissionDate = DateTime.MaxValue;
+                try
+                {
+                    if (!string.IsNullOrWhiteSpace(personInfo.DimissionDate))
+                    {
+                        dimissionDate = Convert.ToDateTime(personInfo.DimissionDate);
+                    }
+                }
+                catch (Exception)
+                {
+                    Trace.WriteLine("error dismission date format: " + personInfo.DimissionDate);
+                    dimissionDate = DateTime.MinValue;
+                }
+                if (firstStatisticDay <= dimissionDate)
+                {
+                    dissmissedPersonSet.Remove(nextPerson);
+                }
+                else
+                {
+                    Trace.WriteLine("dismissed person: " + nextPerson);
+                }
+            } // foreach (var nextPerson in dissmissedPersonSet.ToList())
+
+            // remove the dissmissed records
+            List<AttendanceInfo> removedInfoList = new List<AttendanceInfo>();
+            foreach (var nextInfo in infoList)
+            {
+                if (dissmissedPersonSet.Contains(nextInfo.Name))
+                {
+                    removedInfoList.Add(nextInfo);
+                }
+            }
+            foreach (var nextInfo in removedInfoList)
+            {
+                infoList.Remove(nextInfo);
+            }
+
+            // sort
+            infoList.Sort((info1, info2) =>
+            {
+                if (!info1.Name.Equals(info2.Name))
+                {
+                    return info1.Name.CompareTo(info2.Name);
+                }
+
+                return info1.Date.CompareTo(info2.Date);
+            });
+        }
+
         /// <summary>
         /// it is possible for the attandence info has no some days when the person did not punch card at all.
         /// </summary>
@@ -409,18 +478,33 @@ namespace SHANUExcelAddIn.Util
             // correct system fault
             foreach (var nextInfo in attendanceList)
             {
-                if (CorrectSystemFault(nextInfo, new DateTime(2017, 8, 31)))
+                if (CorrectSystemFault(nextInfo, new DateTime(2017, 8, 31), AttendanceState.None, AttendanceState.Normal))
                 {
                     continue;
                 }
-                if (CorrectSystemFault(nextInfo, new DateTime(2017, 12, 28)))
+                if (CorrectSystemFault(nextInfo, new DateTime(2017, 12, 28), AttendanceState.None, AttendanceState.Normal))
                 {
                     continue;
                 }
-                if (CorrectSystemFault(nextInfo, new DateTime(2017, 12, 29)))
+                if (CorrectSystemFault(nextInfo, new DateTime(2017, 12, 29), AttendanceState.None, AttendanceState.Normal))
                 {
                     continue;
                 }
+
+                // leave 3 days before spring festival
+                if (CorrectSystemFault(nextInfo, new DateTime(2018, 2, 12), AttendanceState.Absent, AttendanceState.Leave))
+                {
+                    continue;
+                }
+                if (CorrectSystemFault(nextInfo, new DateTime(2018, 2, 13), AttendanceState.Absent, AttendanceState.Leave))
+                {
+                    continue;
+                }
+                if (CorrectSystemFault(nextInfo, new DateTime(2018, 2, 14), AttendanceState.Absent, AttendanceState.Leave))
+                {
+                    continue;
+                }
+
             } // foreach (var nextInfo in attendanceList)
 
             //
@@ -486,7 +570,7 @@ namespace SHANUExcelAddIn.Util
                 }
 
                 if ((nextInfo.Date < onboardDate) && (nextInfo.State != AttendanceState.PaidLeave))
-                    //&& ((nextInfo.State == AttendanceState.Normal) || (nextInfo.State == AttendanceState.Late)))
+                //&& ((nextInfo.State == AttendanceState.Normal) || (nextInfo.State == AttendanceState.Late)))
                 {
                     nextInfo.State = AttendanceState.NotOnboard;
                 }
@@ -513,7 +597,7 @@ namespace SHANUExcelAddIn.Util
         /// false - did not do anything
         /// true - correct successfully
         /// </returns>
-        static bool CorrectSystemFault(AttendanceInfo info, DateTime faultDate)
+        static bool CorrectSystemFault(AttendanceInfo info, DateTime faultDate, AttendanceState errorState, AttendanceState correctState)
         {
             if (!info.Date.Equals(faultDate))
             {
@@ -528,18 +612,12 @@ namespace SHANUExcelAddIn.Util
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(personInfo.DimissionDate))
-            {
-                // still on work, correct the status
-                info.State = AttendanceState.Normal;
-                return true;
-            }
-
             // check dismission date
-            DateTime dimissionDate = DateTime.MinValue;
+            DateTime dimissionDate = DateTime.MaxValue;
             try
             {
-                if (!DISMISSION_FORMAT_EXCEPTION.ContainsKey(personInfo.Name))
+                if (!string.IsNullOrWhiteSpace(personInfo.DimissionDate)
+                    && !DISMISSION_FORMAT_EXCEPTION.ContainsKey(personInfo.Name))
                 {
                     dimissionDate = Convert.ToDateTime(personInfo.DimissionDate);
                 }
@@ -561,10 +639,11 @@ namespace SHANUExcelAddIn.Util
             }
 
             // check onboard date
-            DateTime onboardDate = DateTime.MaxValue;
+            DateTime onboardDate = DateTime.MinValue;
             try
             {
-                if (!ONBOARD_FORMAT_EXCEPTION.ContainsKey(personInfo.Name))
+                if (!string.IsNullOrWhiteSpace(personInfo.OnboardDate)
+                    && !ONBOARD_FORMAT_EXCEPTION.ContainsKey(personInfo.Name))
                 {
                     onboardDate = Convert.ToDateTime(personInfo.OnboardDate);
                 }
@@ -586,7 +665,14 @@ namespace SHANUExcelAddIn.Util
             }
 
             // correct the status
-            info.State = AttendanceState.Normal;
+            if (errorState == AttendanceState.None)
+            {
+                info.State = correctState; // for all the case
+            }
+            else if (info.State == errorState)
+            {
+                info.State = correctState; // for specific case
+            }
 
             return true;
         }

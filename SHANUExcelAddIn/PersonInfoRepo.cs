@@ -35,41 +35,94 @@ namespace SHANUExcelAddIn
                 sheet = book.Sheets[sheetIndex];
             }
 
+            int nameColumn = 0;
+            int companyColumn = 0;
+            int managerColumn = 0;
+            int projColumn = 0;
+            int workTypeColumn = 0;
+            int rankColumn = 0;
+            int departmentColumn = 0;
+            int enterDateColumn = 0;
+            int leaveDateColumn = 0;
 
+            // locate column index
+            for (int i = 1; i < 20; i++)
+            {
+                string cellValue = sheet.Cells[1, i].Value != null ? sheet.Cells[1, i].Value.ToString() : string.Empty;
+                if (cellValue == "姓名")
+                {
+                    nameColumn = i;
+                }
+                else if (!string.IsNullOrEmpty(cellValue) && cellValue.Contains("供应商名称"))
+                {
+                    companyColumn = i;
+                }
+                else if (!string.IsNullOrEmpty(cellValue) && cellValue.Contains("项目经理"))
+                {
+                    managerColumn = i;
+                }
+                else if (!string.IsNullOrEmpty(cellValue) && cellValue.Contains("参与项目名称"))
+                {
+                    projColumn = i;
+                }
+                else if (!string.IsNullOrEmpty(cellValue) && cellValue.Contains("外包形式"))
+                {
+                    workTypeColumn = i;
+                }
+                else if (cellValue == "职级")
+                {
+                    rankColumn = i;
+                }
+                else if (cellValue == "所属中心")
+                {
+                    departmentColumn = i;
+                }
+                else if (cellValue == "入场时间")
+                {
+                    enterDateColumn = i;
+                }
+                else if (cellValue == "离场时间")
+                {
+                    leaveDateColumn = i;
+                }
+
+            } // for (int i = 1; i < 20; i++)
+
+            // get cell values
             for (rowIndex = 1; rowIndex < 5000; rowIndex++)
             {
                 PersonInfo info = new PersonInfo();
 
                 // name
-                info.Name = Convert.ToString(sheet.Cells[rowIndex, 3].Value);
+                info.Name = Convert.ToString(sheet.Cells[rowIndex, nameColumn].Value);
                 if (string.IsNullOrWhiteSpace(info.Name))
                 {
                     continue;
                 }
 
                 // company
-                info.Company = Convert.ToString(sheet.Cells[rowIndex, 2].Value);
+                info.Company = Convert.ToString(sheet.Cells[rowIndex, companyColumn].Value);
 
                 // manager
-                info.Manager = Convert.ToString(sheet.Cells[rowIndex, 4].Value);
+                info.Manager = Convert.ToString(sheet.Cells[rowIndex, managerColumn].Value);
 
                 // project
-                info.Project = Convert.ToString(sheet.Cells[rowIndex, 5].Value);
+                info.Project = Convert.ToString(sheet.Cells[rowIndex, projColumn].Value);
 
                 // work type
-                info.WorkType = Convert.ToString(sheet.Cells[rowIndex, 6].Value);
+                info.WorkType = Convert.ToString(sheet.Cells[rowIndex, workTypeColumn].Value);
 
                 // Rank - 初、中、高、专家
-                info.Rank = Convert.ToString(sheet.Cells[rowIndex, 7].Value);
+                info.Rank = Convert.ToString(sheet.Cells[rowIndex, rankColumn].Value);
 
                 // department
-                info.Department = Convert.ToString(sheet.Cells[rowIndex, 8].Value);
+                info.Department = Convert.ToString(sheet.Cells[rowIndex, departmentColumn].Value);
 
                 // enter date
-                info.OnboardDate = Convert.ToString(sheet.Cells[rowIndex, 10].Value); // != null ? sheet.Cells[rowIndex, 10].Value.ToString() : null;
+                info.OnboardDate = Convert.ToString(sheet.Cells[rowIndex, enterDateColumn].Value); // != null ? sheet.Cells[rowIndex, 10].Value.ToString() : null;
 
                 // leave date
-                info.DimissionDate = Convert.ToString(sheet.Cells[rowIndex, 11].Value); // != null ? sheet.Cells[rowIndex, 11].Value.ToString() : null;
+                info.DimissionDate = Convert.ToString(sheet.Cells[rowIndex, leaveDateColumn].Value); // != null ? sheet.Cells[rowIndex, 11].Value.ToString() : null;
 
 
                 lock (InfoMap)
