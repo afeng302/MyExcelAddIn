@@ -61,7 +61,7 @@ namespace SHANUExcelAddIn.Util
             // 2017
             WORKING_WEEKEND.Add((new DateTime(2017, 9, 30)).ToShortDateString());
             // 2018
-            WORKING_WEEKEND.Add((new DateTime(2018, 2, 11)).ToShortDateString());
+            WORKING_WEEKEND.Add((new DateTime(2018, 2, 10)).ToShortDateString()); // exchanged with the workday 2.11
             WORKING_WEEKEND.Add((new DateTime(2018, 2, 24)).ToShortDateString());
             WORKING_WEEKEND.Add((new DateTime(2018, 4, 8)).ToShortDateString());
             WORKING_WEEKEND.Add((new DateTime(2018, 4, 28)).ToShortDateString());
