@@ -165,15 +165,15 @@ namespace SHANUExcelAddIn
                         return 1;   // always settle as a normal day
                     case AttendanceState.Leave:                    
                         {
-                            if (this.WorkTime.TotalHours > 9.0)
+                            if (this.WorkTime.TotalHours < 1.00) 
                             {
-                                return 1;
+                                // we do not take this case into account if the pserson stayed in office less than 1 hour
+                                // BTW, the wotktime may be TimeSpan.MinValue in invalid case
+                                return 0;
                             }
-                            if (this.WorkTime.TotalHours > 4.0)
-                            {
-                                return 0.5;
-                            }
-                            return 0;
+
+                            double d = Math.Round(this.WorkTime.TotalHours / 9.0, 2);
+                            return d > 1.00 ? 1.00 : d;
                         }
                     case AttendanceState.Absent:
                     case AttendanceState.Dimission:
