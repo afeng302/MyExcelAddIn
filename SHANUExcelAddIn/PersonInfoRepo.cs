@@ -30,7 +30,7 @@ namespace SHANUExcelAddIn
 
             int sheetIndex = 1;
             Excel.Worksheet sheet = book.Sheets[sheetIndex];
-            while ((sheet.Name != "外包员工资料") && (sheetIndex++ < book.Sheets.Count))
+            while ((!sheet.Name.Contains("资料")) && (sheetIndex++ < book.Sheets.Count))
             {
                 sheet = book.Sheets[sheetIndex];
             }

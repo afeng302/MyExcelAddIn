@@ -109,6 +109,11 @@ namespace SHANUExcelAddIn.Util
         {
             foreach (Excel.Worksheet nextSheet in book.Sheets)
             {
+                if (!nextSheet.Name.Contains("汇总"))
+                {
+                    continue;
+                }
+
                 // locate the "姓名" row
                 int nameRowIndex = 1;
                 string value = Convert.ToString(nextSheet.Cells[nameRowIndex, 1].Value);
