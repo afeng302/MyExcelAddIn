@@ -166,6 +166,12 @@ namespace SHANUExcelAddIn.Util
             foreach (var nextPerson in dissmissedPersonSet.ToList())
             {
                 PersonInfo personInfo = PersonInfoRepo.GetPersonInfo(nextPerson);
+                if (personInfo == null)
+                {
+                    MessageBox.Show(string.Format("警告：没有找到台账信息 [{0}] ", nextPerson));
+                    continue;
+                }
+
                 // check dismission date
                 DateTime dimissionDate = DateTime.MaxValue;
                 try
