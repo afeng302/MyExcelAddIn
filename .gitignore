@@ -259,3 +259,6 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/SHANUExcelAddIn/publish_1_0_0_17.zip
+/SHANUExcelAddIn/publish_1_0_0_15.zip
+/SHANUExcelAddIn/publish_1_0_0_14.zip

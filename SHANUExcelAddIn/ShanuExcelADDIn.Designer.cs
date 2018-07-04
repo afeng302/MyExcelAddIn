@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ShanuExcelADDIn));
             this.btnAttendaceExpception = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnStaffStatistic = new System.Windows.Forms.Button();
+            this.btnWorkHourPoll = new System.Windows.Forms.Button();
             this.btnWorkLoad = new System.Windows.Forms.Button();
             this.btnStatement = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -64,22 +64,22 @@
             this.label1.TabIndex = 260;
             this.label1.Text = "目录： C:\\data\r\n文件： \r\n    科技部外包考勤.xlsx\r\n    外包人员台账.xlsx";
             // 
-            // btnStaffStatistic
+            // btnWorkHourPoll
             // 
-            this.btnStaffStatistic.BackColor = System.Drawing.Color.OliveDrab;
-            this.btnStaffStatistic.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnStaffStatistic.BackgroundImage")));
-            this.btnStaffStatistic.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnStaffStatistic.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnStaffStatistic.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnStaffStatistic.ForeColor = System.Drawing.Color.DarkOliveGreen;
-            this.btnStaffStatistic.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnStaffStatistic.Location = new System.Drawing.Point(3, 137);
-            this.btnStaffStatistic.Name = "btnStaffStatistic";
-            this.btnStaffStatistic.Size = new System.Drawing.Size(117, 43);
-            this.btnStaffStatistic.TabIndex = 261;
-            this.btnStaffStatistic.Text = "人力外包\r\n人员统计";
-            this.btnStaffStatistic.UseVisualStyleBackColor = false;
-            this.btnStaffStatistic.Click += new System.EventHandler(this.btnStaffStatistic_Click);
+            this.btnWorkHourPoll.BackColor = System.Drawing.Color.OliveDrab;
+            this.btnWorkHourPoll.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnWorkHourPoll.BackgroundImage")));
+            this.btnWorkHourPoll.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnWorkHourPoll.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnWorkHourPoll.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnWorkHourPoll.ForeColor = System.Drawing.Color.DarkOliveGreen;
+            this.btnWorkHourPoll.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnWorkHourPoll.Location = new System.Drawing.Point(3, 361);
+            this.btnWorkHourPoll.Name = "btnWorkHourPoll";
+            this.btnWorkHourPoll.Size = new System.Drawing.Size(117, 43);
+            this.btnWorkHourPoll.TabIndex = 261;
+            this.btnWorkHourPoll.Text = "工时归集";
+            this.btnWorkHourPoll.UseVisualStyleBackColor = false;
+            this.btnWorkHourPoll.Click += new System.EventHandler(this.btnWorkHourPoll_Click);
             // 
             // btnWorkLoad
             // 
@@ -90,7 +90,7 @@
             this.btnWorkLoad.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnWorkLoad.ForeColor = System.Drawing.Color.DarkOliveGreen;
             this.btnWorkLoad.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnWorkLoad.Location = new System.Drawing.Point(3, 195);
+            this.btnWorkLoad.Location = new System.Drawing.Point(3, 126);
             this.btnWorkLoad.Name = "btnWorkLoad";
             this.btnWorkLoad.Size = new System.Drawing.Size(117, 43);
             this.btnWorkLoad.TabIndex = 262;
@@ -107,7 +107,7 @@
             this.btnStatement.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnStatement.ForeColor = System.Drawing.Color.DarkOliveGreen;
             this.btnStatement.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnStatement.Location = new System.Drawing.Point(3, 281);
+            this.btnStatement.Location = new System.Drawing.Point(3, 201);
             this.btnStatement.Name = "btnStatement";
             this.btnStatement.Size = new System.Drawing.Size(117, 43);
             this.btnStatement.TabIndex = 263;
@@ -119,7 +119,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("SimSun", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label2.Location = new System.Drawing.Point(1, 256);
+            this.label2.Location = new System.Drawing.Point(3, 182);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(147, 14);
             this.label2.TabIndex = 264;
@@ -133,11 +133,11 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnStatement);
             this.Controls.Add(this.btnWorkLoad);
-            this.Controls.Add(this.btnStaffStatistic);
+            this.Controls.Add(this.btnWorkHourPoll);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnAttendaceExpception);
             this.Name = "ShanuExcelADDIn";
-            this.Size = new System.Drawing.Size(176, 337);
+            this.Size = new System.Drawing.Size(176, 419);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -146,7 +146,7 @@
         #endregion
         private System.Windows.Forms.Button btnAttendaceExpception;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button btnStaffStatistic;
+        private System.Windows.Forms.Button btnWorkHourPoll;
         private System.Windows.Forms.Button btnWorkLoad;
         private System.Windows.Forms.Button btnStatement;
         private System.Windows.Forms.Label label2;

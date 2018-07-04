@@ -291,122 +291,123 @@ namespace SHANUExcelAddIn
             //objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
         }
 
-        private void btnStaffStatistic_Click(object sender, EventArgs e)
-        {
-            // Turn off screen updating and displaying alerts
-            Globals.ThisAddIn.Application.ScreenUpdating = false;
-            Globals.ThisAddIn.Application.DisplayAlerts = false;
-            Globals.ThisAddIn.Application.AskToUpdateLinks = false;
 
-            try
-            {
-                // Person Repository
-                Excel.Workbook personBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\外包人员台账.xlsx");
-                PersonInfoRepo.GenerateInfoMapByName(personBook);
-                personBook.Close();
+        //private void btnStaffStatistic_Click(object sender, EventArgs e)
+        //{
+        //    // Turn off screen updating and displaying alerts
+        //    Globals.ThisAddIn.Application.ScreenUpdating = false;
+        //    Globals.ThisAddIn.Application.DisplayAlerts = false;
+        //    Globals.ThisAddIn.Application.AskToUpdateLinks = false;
 
-                // filter out person
-                List<PersonInfo> outsourceList = PersonInfoRepo.GetOnsiteOutsourceList();
+        //    try
+        //    {
+        //        // Person Repository
+        //        Excel.Workbook personBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\外包人员台账.xlsx");
+        //        PersonInfoRepo.GenerateInfoMapByName(personBook);
+        //        personBook.Close();
 
-                // 
-                this.WriteOutsourceInfo(outsourceList, Globals.ThisAddIn.Application.ActiveSheet);
-            }
-            catch (Exception exp)
-            {
-                MessageBox.Show(exp.ToString());
+        //        // filter out person
+        //        List<PersonInfo> outsourceList = PersonInfoRepo.GetOnsiteOutsourceList();
 
-                throw;
-            }
+        //        // 
+        //        this.WriteOutsourceInfo(outsourceList, Globals.ThisAddIn.Application.ActiveSheet);
+        //    }
+        //    catch (Exception exp)
+        //    {
+        //        MessageBox.Show(exp.ToString());
 
-            // Turn on screen updating and displaying alerts again
-            Globals.ThisAddIn.Application.ScreenUpdating = true;
-            Globals.ThisAddIn.Application.DisplayAlerts = true;
-            Globals.ThisAddIn.Application.AskToUpdateLinks = true;
-        }
+        //        throw;
+        //    }
 
-        private void WriteOutsourceInfo(List<PersonInfo> infoList, Excel.Worksheet sheet)
-        {
-            int rowIndex = 1;
-            int colIndex = 1;
+        //    // Turn on screen updating and displaying alerts again
+        //    Globals.ThisAddIn.Application.ScreenUpdating = true;
+        //    Globals.ThisAddIn.Application.DisplayAlerts = true;
+        //    Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+        //}
 
-            Excel.Range objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "姓名";
-            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        //private void WriteOutsourceInfo(List<PersonInfo> infoList, Excel.Worksheet sheet)
+        //{
+        //    int rowIndex = 1;
+        //    int colIndex = 1;
 
-            objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "所属公司";
-            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        //    Excel.Range objRange = sheet.Cells[rowIndex, colIndex++];
+        //    objRange.Value = "姓名";
+        //    objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-            objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "项目组";
-            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        //    objRange = sheet.Cells[rowIndex, colIndex++];
+        //    objRange.Value = "所属公司";
+        //    objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-            objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "所属系统";
-            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        //    objRange = sheet.Cells[rowIndex, colIndex++];
+        //    objRange.Value = "项目组";
+        //    objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-            objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "主管项目经理";
-            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        //    objRange = sheet.Cells[rowIndex, colIndex++];
+        //    objRange.Value = "所属系统";
+        //    objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-            objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "外包形式";
-            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        //    objRange = sheet.Cells[rowIndex, colIndex++];
+        //    objRange.Value = "主管项目经理";
+        //    objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-            objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "所属中心";
-            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        //    objRange = sheet.Cells[rowIndex, colIndex++];
+        //    objRange.Value = "外包形式";
+        //    objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-            objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "备注";
-            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        //    objRange = sheet.Cells[rowIndex, colIndex++];
+        //    objRange.Value = "所属中心";
+        //    objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-            foreach (var nextInfo in infoList)
-            {
-                rowIndex++; // from row #2
-                colIndex = 1;
+        //    objRange = sheet.Cells[rowIndex, colIndex++];
+        //    objRange.Value = "备注";
+        //    objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "姓名";
-                objRange.Value = nextInfo.Name;
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        //    foreach (var nextInfo in infoList)
+        //    {
+        //        rowIndex++; // from row #2
+        //        colIndex = 1;
 
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "所属公司";
-                objRange.Value = nextInfo != null ? nextInfo.Company : string.Empty;
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        //        objRange = sheet.Cells[rowIndex, colIndex++];
+        //        //objRange.Value = "姓名";
+        //        objRange.Value = nextInfo.Name;
+        //        objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "项目组";
-                objRange.Value = nextInfo != null ? nextInfo.Project : string.Empty;
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        //        objRange = sheet.Cells[rowIndex, colIndex++];
+        //        //objRange.Value = "所属公司";
+        //        objRange.Value = nextInfo != null ? nextInfo.Company : string.Empty;
+        //        objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "所属系统";
-                objRange.Value = nextInfo != null ? nextInfo.System : string.Empty;
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        //        objRange = sheet.Cells[rowIndex, colIndex++];
+        //        //objRange.Value = "项目组";
+        //        objRange.Value = nextInfo != null ? nextInfo.Project : string.Empty;
+        //        objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "主管项目经理";
-                objRange.Value = nextInfo != null ? nextInfo.Manager : string.Empty;
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        //        objRange = sheet.Cells[rowIndex, colIndex++];
+        //        //objRange.Value = "所属系统";
+        //        objRange.Value = nextInfo != null ? nextInfo.System : string.Empty;
+        //        objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "外包形式";
-                objRange.Value = nextInfo != null ? nextInfo.WorkType : string.Empty;
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        //        objRange = sheet.Cells[rowIndex, colIndex++];
+        //        //objRange.Value = "主管项目经理";
+        //        objRange.Value = nextInfo != null ? nextInfo.Manager : string.Empty;
+        //        objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "所属中心";
-                objRange.Value = nextInfo != null ? nextInfo.Department : string.Empty;
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        //        objRange = sheet.Cells[rowIndex, colIndex++];
+        //        //objRange.Value = "外包形式";
+        //        objRange.Value = nextInfo != null ? nextInfo.WorkType : string.Empty;
+        //        objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "备注";
-                objRange.Value = string.Empty;
-                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-            }
-        }
+        //        objRange = sheet.Cells[rowIndex, colIndex++];
+        //        //objRange.Value = "所属中心";
+        //        objRange.Value = nextInfo != null ? nextInfo.Department : string.Empty;
+        //        objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+        //        objRange = sheet.Cells[rowIndex, colIndex++];
+        //        //objRange.Value = "备注";
+        //        objRange.Value = string.Empty;
+        //        objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        //    }
+        //}
 
         private void btnWorkLoad_Click(object sender, EventArgs e)
         {
@@ -966,6 +967,65 @@ namespace SHANUExcelAddIn
 
             } // foreach (var nextName in nameList)
             #endregion // rows
+        }
+
+        private void btnWorkHourPoll_Click(object sender, EventArgs e)
+        {
+            // Turn off screen updating and displaying alerts
+            Globals.ThisAddIn.Application.ScreenUpdating = false;
+            Globals.ThisAddIn.Application.DisplayAlerts = false;
+            Globals.ThisAddIn.Application.AskToUpdateLinks = false;
+
+            MessageBox.Show("let's start...");
+
+            try
+            {
+                Excel.Worksheet activeSheet = Globals.ThisAddIn.Application.ActiveSheet;
+
+                //Excel.Workbook book = Globals.ThisAddIn.Application.ActiveWorkbook;
+                //Excel.Workbook book = Globals.ThisAddIn.Application.Workbooks.Open("D:\\Working\\Hope\\系统&项目\\研发费用加计扣除\\2018年研发项目行方员工工时分配表.xlsx");
+                Excel.Workbook book = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\2018年研发项目行方员工工时分配表.xlsx");
+                Excel.Worksheet sheet = null;
+                for (int i = 1; i <= book.Sheets.Count; i++)
+                {
+                    sheet = book.Sheets[i] as Excel.Worksheet;
+                    if (sheet.Name.Contains("员工工时明细"))
+                    {
+                        break;
+                    }
+                    sheet = null;
+                } // for (int i = 0; i < book.Sheets.Count - 1; i++)
+
+                if (sheet == null)
+                {
+                    MessageBox.Show("没有找到 [员工工时明细] sheet");
+
+                    // Turn on screen updating and displaying alerts again
+                    Globals.ThisAddIn.Application.ScreenUpdating = true;
+                    Globals.ThisAddIn.Application.DisplayAlerts = true;
+                    Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+                    return;
+                }
+
+                // generate work hour info
+                WorkHourPollUtil.CalcStaffMonth(sheet);
+
+                // write out the result
+                WorkHourPollUtil.WriteLines(activeSheet);
+
+                //MessageBox.Show("works! pls go ahead.");
+
+                book.Close();
+            }
+            catch (Exception exp)
+            {
+                MessageBox.Show(exp.ToString());
+            }
+
+            // Turn on screen updating and displaying alerts again
+            Globals.ThisAddIn.Application.ScreenUpdating = true;
+            Globals.ThisAddIn.Application.DisplayAlerts = true;
+            Globals.ThisAddIn.Application.AskToUpdateLinks = true;
         }
     }
 }
