@@ -35,6 +35,7 @@
             this.btnWorkLoad = new System.Windows.Forms.Button();
             this.btnStatement = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
+            this.btnPerfTable = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnAttendaceExpception
@@ -73,7 +74,7 @@
             this.btnWorkHourPoll.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnWorkHourPoll.ForeColor = System.Drawing.Color.DarkOliveGreen;
             this.btnWorkHourPoll.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnWorkHourPoll.Location = new System.Drawing.Point(3, 361);
+            this.btnWorkHourPoll.Location = new System.Drawing.Point(3, 324);
             this.btnWorkHourPoll.Name = "btnWorkHourPoll";
             this.btnWorkHourPoll.Size = new System.Drawing.Size(117, 43);
             this.btnWorkHourPoll.TabIndex = 261;
@@ -125,11 +126,29 @@
             this.label2.TabIndex = 264;
             this.label2.Text = "文件： 人月单价.xlsx";
             // 
+            // btnPerfTable
+            // 
+            this.btnPerfTable.BackColor = System.Drawing.Color.OliveDrab;
+            this.btnPerfTable.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnPerfTable.BackgroundImage")));
+            this.btnPerfTable.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnPerfTable.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnPerfTable.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPerfTable.ForeColor = System.Drawing.Color.DarkOliveGreen;
+            this.btnPerfTable.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnPerfTable.Location = new System.Drawing.Point(3, 373);
+            this.btnPerfTable.Name = "btnPerfTable";
+            this.btnPerfTable.Size = new System.Drawing.Size(117, 43);
+            this.btnPerfTable.TabIndex = 265;
+            this.btnPerfTable.Text = "绩效考核表";
+            this.btnPerfTable.UseVisualStyleBackColor = false;
+            this.btnPerfTable.Click += new System.EventHandler(this.btnPerfTable_Click);
+            // 
             // ShanuExcelADDIn
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(172)))), ((int)(((byte)(91)))));
+            this.Controls.Add(this.btnPerfTable);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnStatement);
             this.Controls.Add(this.btnWorkLoad);
@@ -137,7 +156,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnAttendaceExpception);
             this.Name = "ShanuExcelADDIn";
-            this.Size = new System.Drawing.Size(176, 419);
+            this.Size = new System.Drawing.Size(176, 475);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -150,5 +169,6 @@
         private System.Windows.Forms.Button btnWorkLoad;
         private System.Windows.Forms.Button btnStatement;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnPerfTable;
     }
 }

@@ -1027,5 +1027,99 @@ namespace SHANUExcelAddIn
             Globals.ThisAddIn.Application.DisplayAlerts = true;
             Globals.ThisAddIn.Application.AskToUpdateLinks = true;
         }
+
+        private void btnPerfTable_Click(object sender, EventArgs e)
+        {
+            // Turn off screen updating and displaying alerts
+            Globals.ThisAddIn.Application.ScreenUpdating = false;
+            Globals.ThisAddIn.Application.DisplayAlerts = false;
+            Globals.ThisAddIn.Application.AskToUpdateLinks = false;
+
+            //MessageBox.Show("let's start...");
+
+            try
+            {
+                Excel.Worksheet activeSheet = Globals.ThisAddIn.Application.ActiveSheet;
+
+
+                Excel.Workbook book = Globals.ThisAddIn.Application.Workbooks.Open("D:\\Working\\Hope\\绩效考核\\2018-Q2\\开发中心KPI模板-1.xlsx");
+                Excel.Worksheet dataSheet = null;
+                Excel.Worksheet memberSheet = null;
+                for (int i = 1; i <= book.Sheets.Count; i++)
+                {
+                    Excel.Worksheet nextSheet = book.Sheets[i] as Excel.Worksheet;
+
+                    if ((dataSheet == null) && nextSheet.Name.Contains("Data"))
+                    {
+                        dataSheet = nextSheet;
+                    }
+                    if ((memberSheet == null) && nextSheet.Name.Contains("待考核人员名单"))
+                    {
+                        memberSheet = nextSheet;
+                    }
+
+                    if ((dataSheet != null) && (memberSheet != null))
+                    {
+                        break;
+                    }
+                } // for (int i = 0; i < book.Sheets.Count - 1; i++)
+
+                if (dataSheet == null)
+                {
+                    MessageBox.Show("没有找到 [Data] sheet");
+
+                    // Turn on screen updating and displaying alerts again
+                    Globals.ThisAddIn.Application.ScreenUpdating = true;
+                    Globals.ThisAddIn.Application.DisplayAlerts = true;
+                    Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+                    book.Close();
+                    return;
+                }
+
+                if (memberSheet == null)
+                {
+                    MessageBox.Show("没有找到 [待考核人员名单] sheet");
+                                        
+                    // Turn on screen updating and displaying alerts again
+                    Globals.ThisAddIn.Application.ScreenUpdating = true;
+                    Globals.ThisAddIn.Application.DisplayAlerts = true;
+                    Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+                    book.Close();
+                    return;
+                }
+
+                // MessageBox.Show("works! pls go ahead.");
+
+                //
+                // read KPI definition info
+                PerfTableUtil.ReadKPIItems(dataSheet);
+
+                //
+                // read candidate info
+                PerfTableUtil.ReadCandidates(memberSheet);
+
+                //
+                // build evaluation info
+                PerfTableUtil.BuildEvaluationInfoList();
+
+                //
+                // write out the evaluation info
+                PerfTableUtil.WriteoutEvaluationList(activeSheet);
+
+                book.Close();
+
+            }
+            catch (Exception exp)
+            {
+                MessageBox.Show(exp.ToString());
+            }
+
+            //MessageBox.Show("game over...");
+
+            // Turn on screen updating and displaying alerts again
+            Globals.ThisAddIn.Application.ScreenUpdating = true;
+            Globals.ThisAddIn.Application.DisplayAlerts = true;
+            Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+        }
     }
 }

@@ -218,6 +218,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\AttendanceUtil.cs" />
+    <Compile Include="Util\KPI_ITEM_LIST.cs" />
+    <Compile Include="Util\PerfTableUtil.cs" />
     <Compile Include="Util\SettleUtil.cs" />
     <Compile Include="Util\WorkdayUtil.cs" />
     <Compile Include="Util\DismissionChecker.cs" />
