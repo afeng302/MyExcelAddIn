@@ -41,6 +41,8 @@ namespace SHANUExcelAddIn.Util
 
         public string[] TestCenter { get; set; }
 
+        public string[] BigDataCenter { get; set; }
+
         public string[] DevOpsGroup { get; set; }
     }
 
@@ -76,6 +78,12 @@ namespace SHANUExcelAddIn.Util
 
         public static void ReadKPIItems(Excel.Worksheet sheet)
         {
+
+            KPI_INFO_LIST.Clear();
+            CANDIDATE_ROLE_KPI_MAP.Clear();
+            CANDIDATE_INFO_LIST.Clear();
+            EVALUATION_INFO_LIST.Clear();
+
             #region read out the kpi items
             string currRole = string.Empty;
             for (int rowIndex = 1; rowIndex < 100; rowIndex++)
@@ -162,7 +170,9 @@ namespace SHANUExcelAddIn.Util
 
                 info.TestCenter = SplitValues(sheet.Cells[rowIndex, 9].Value as string);
 
-                info.DevOpsGroup = SplitValues(sheet.Cells[rowIndex, 10].Value as string);
+                info.BigDataCenter = SplitValues(sheet.Cells[rowIndex, 10].Value as string);
+
+                info.DevOpsGroup = SplitValues(sheet.Cells[rowIndex, 11].Value as string);
 
                 CANDIDATE_INFO_LIST.Add(info);
             } // for (int rowIndex = 1; rowIndex < 100; rowIndex++)
@@ -182,69 +192,83 @@ namespace SHANUExcelAddIn.Util
         {
             foreach (var nextCandidateInfo in CANDIDATE_INFO_LIST)
             {
+                List<EvaluationInfo> evaluationList4OnePerson = new List<EvaluationInfo>();
 
                 List<EvaluationInfo> evaluationList = Build4OneEvaluatorRole(nextCandidateInfo.Name, nextCandidateInfo.Role,
                     "项目经理", nextCandidateInfo.ProjectManages);
                 if (evaluationList != null)
                 {
-                    EVALUATION_INFO_LIST.AddRange(evaluationList);
+                    evaluationList4OnePerson.AddRange(evaluationList);
                 }
 
                 evaluationList = Build4OneEvaluatorRole(nextCandidateInfo.Name, nextCandidateInfo.Role,
                     "应用负责人", nextCandidateInfo.TechManagers);
                 if (evaluationList != null)
                 {
-                    EVALUATION_INFO_LIST.AddRange(evaluationList);
+                    evaluationList4OnePerson.AddRange(evaluationList);
                 }
 
                 evaluationList = Build4OneEvaluatorRole(nextCandidateInfo.Name, nextCandidateInfo.Role,
                     "测试经理", nextCandidateInfo.TestManagers);
                 if (evaluationList != null)
                 {
-                    EVALUATION_INFO_LIST.AddRange(evaluationList);
+                    evaluationList4OnePerson.AddRange(evaluationList);
                 }
 
                 evaluationList = Build4OneEvaluatorRole(nextCandidateInfo.Name, nextCandidateInfo.Role,
                     "应用运维", nextCandidateInfo.AppOpses);
                 if (evaluationList != null)
                 {
-                    EVALUATION_INFO_LIST.AddRange(evaluationList);
+                    evaluationList4OnePerson.AddRange(evaluationList);
                 }
 
                 evaluationList = Build4OneEvaluatorRole(nextCandidateInfo.Name, nextCandidateInfo.Role,
                     "开发中心", nextCandidateInfo.DevCenter);
                 if (evaluationList != null)
                 {
-                    EVALUATION_INFO_LIST.AddRange(evaluationList);
+                    evaluationList4OnePerson.AddRange(evaluationList);
                 }
 
                 evaluationList = Build4OneEvaluatorRole(nextCandidateInfo.Name, nextCandidateInfo.Role,
                    "运维中心", nextCandidateInfo.OpsCenter);
                 if (evaluationList != null)
                 {
-                    EVALUATION_INFO_LIST.AddRange(evaluationList);
+                    evaluationList4OnePerson.AddRange(evaluationList);
                 }
 
                 evaluationList = Build4OneEvaluatorRole(nextCandidateInfo.Name, nextCandidateInfo.Role,
                    "测试中心", nextCandidateInfo.TestCenter);
                 if (evaluationList != null)
                 {
-                    EVALUATION_INFO_LIST.AddRange(evaluationList);
+                    evaluationList4OnePerson.AddRange(evaluationList);
+                }
+
+                evaluationList = Build4OneEvaluatorRole(nextCandidateInfo.Name, nextCandidateInfo.Role,
+                   "大数据中心", nextCandidateInfo.BigDataCenter);
+                if (evaluationList != null)
+                {
+                    evaluationList4OnePerson.AddRange(evaluationList);
                 }
 
                 evaluationList = Build4OneEvaluatorRole(nextCandidateInfo.Name, nextCandidateInfo.Role,
                    "DevOps", nextCandidateInfo.DevOpsGroup);
                 if (evaluationList != null)
                 {
-                    EVALUATION_INFO_LIST.AddRange(evaluationList);
+                    evaluationList4OnePerson.AddRange(evaluationList);
                 }
 
                 evaluationList = Build4OneEvaluatorRole(nextCandidateInfo.Name, nextCandidateInfo.Role,
                    "【客观量化】", new string[] { "【客观量化】" });
                 if (evaluationList != null)
                 {
-                    EVALUATION_INFO_LIST.AddRange(evaluationList);
+                    evaluationList4OnePerson.AddRange(evaluationList);
                 }
+
+                // validate
+                ValidateByCandidateRole(nextCandidateInfo.Name, nextCandidateInfo.Role, evaluationList4OnePerson);
+
+                // add to global list
+                EVALUATION_INFO_LIST.AddRange(evaluationList4OnePerson);
 
             } // foreach (var nextCandidateInfo in CANDIDATE_INFO_LIST)
         }
@@ -298,6 +322,36 @@ namespace SHANUExcelAddIn.Util
             }
 
             return infoList;
+        }
+
+        /// <summary>
+        /// assure all the KPI items have evaluator
+        /// </summary>
+        /// <param name="candidateName"></param>
+        /// /// <param name="candidateRole"></param>
+        /// <param name="evaluationList"></param>
+        static void ValidateByCandidateRole(string candidateName, string candidateRole, List<EvaluationInfo> evaluationList)
+        {
+            // locate candidate role
+            if (!CANDIDATE_ROLE_KPI_MAP.ContainsKey(candidateRole))
+            {
+                MessageBox.Show("cannot find candidat role " + candidateRole);
+                return;
+            }
+
+            // assure each KPI item has evaluator
+            HashSet<string> evaluationKPIHash = new HashSet<string>();
+            foreach (var nextInfo in evaluationList)
+            {
+                evaluationKPIHash.Add(nextInfo.KPIID);
+            }
+            foreach (var nextKPIInfo in CANDIDATE_ROLE_KPI_MAP[candidateRole])
+            {
+                if (!evaluationKPIHash.Contains(nextKPIInfo.ID))
+                {
+                    MessageBox.Show("cannot find evaluator for " + candidateName + " at role " + nextKPIInfo.ID + " / " + nextKPIInfo.EvaluatorRole);
+                }
+            }
         }
 
         public static void WriteoutEvaluationList(Excel.Worksheet sheet)

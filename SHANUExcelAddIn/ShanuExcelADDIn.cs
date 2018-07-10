@@ -983,8 +983,8 @@ namespace SHANUExcelAddIn
                 Excel.Worksheet activeSheet = Globals.ThisAddIn.Application.ActiveSheet;
 
                 //Excel.Workbook book = Globals.ThisAddIn.Application.ActiveWorkbook;
-                //Excel.Workbook book = Globals.ThisAddIn.Application.Workbooks.Open("D:\\Working\\Hope\\系统&项目\\研发费用加计扣除\\2018年研发项目行方员工工时分配表.xlsx");
-                Excel.Workbook book = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\2018年研发项目行方员工工时分配表.xlsx");
+                Excel.Workbook book = Globals.ThisAddIn.Application.Workbooks.Open("D:\\Working\\Hope\\系统&项目\\研发费用加计扣除\\2018年研发项目行方员工工时分配表.xlsx");
+                //Excel.Workbook book = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\2018年研发项目行方员工工时分配表.xlsx");
                 Excel.Worksheet sheet = null;
                 for (int i = 1; i <= book.Sheets.Count; i++)
                 {
@@ -1007,9 +1007,11 @@ namespace SHANUExcelAddIn
                     return;
                 }
 
+                //
                 // generate work hour info
                 WorkHourPollUtil.CalcStaffMonth(sheet);
 
+                //
                 // write out the result
                 WorkHourPollUtil.WriteLines(activeSheet);
 

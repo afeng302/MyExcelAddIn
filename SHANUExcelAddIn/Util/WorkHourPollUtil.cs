@@ -202,7 +202,7 @@ namespace SHANUExcelAddIn.Util
                     }
                 } // for (int i = 0; i < nameMonthMap[nextKey].Count; i++)
             } // foreach (var nextKey in nameMonthMap.Keys)
-            
+
             //
             // remove the duplicat items
             foreach (var nextItem in removalItemList)
@@ -231,39 +231,89 @@ namespace SHANUExcelAddIn.Util
         {
             int colIndex = 0;
             int rowIndex = 0;
+            Microsoft.Office.Interop.Excel.Range objRange = null;
 
-            WorkHourItem preItem = null;
+            #region title line
+            rowIndex = 1;
+            colIndex = 1;
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "参与项目";
+            objRange.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "员工姓名";
+            objRange.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "入场日期";
+            objRange.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "离场日期";
+            objRange.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+
+            for (int i = 0; i < 12; i++)
+            {
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                objRange.Value = string.Format("{0}月", i + 1);
+                objRange.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+            }
+            #endregion title line
+
+            Dictionary<string, List<WorkHourItem>> systemNameMap = new Dictionary<string, List<WorkHourItem>>();
+
+            #region Group by system + name
             foreach (var nextItem in WORK_HOUR_ITEM_LIST)
             {
-                Microsoft.Office.Interop.Excel.Range objRange = null;
-
-                if ((preItem == null) || (nextItem.Name != preItem.Name) || (nextItem.System != preItem.System))
+                string key = string.Format("{0}.{1}", nextItem.System, nextItem.Name);
+                if (!systemNameMap.ContainsKey(key))
                 {
-                    // move the next row
-                    rowIndex++;
-                    colIndex = 1;
-                    // system
-                    objRange = sheet.Cells[rowIndex, colIndex++];
-                    objRange.Value = nextItem.System;
-                    objRange.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
-                    // name
-                    objRange = sheet.Cells[rowIndex, colIndex++];
-                    objRange.Value = nextItem.Name;
-                    objRange.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                    systemNameMap[key] = new List<WorkHourItem>();
                 }
-                // month
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                objRange.Value = nextItem.Month;
-                objRange.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
-                // staff month
-                objRange = sheet.Cells[rowIndex, colIndex++];
-                objRange.Value = nextItem.StaffMonth;
-                objRange.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                systemNameMap[key].Add(nextItem);
+            }
+            #endregion Group by system + name
 
+            #region write out lines
+            foreach (var nextKey in systemNameMap.Keys)
+            {
+                foreach (var nextItem in systemNameMap[nextKey])
+                {
+                    // write header
+                    if (nextItem == systemNameMap[nextKey].First<WorkHourItem>())
+                    {
+                        // move the next line
+                        rowIndex++;
+                        colIndex = 1;
 
-                preItem = nextItem;
+                        objRange = sheet.Cells[rowIndex, colIndex++];
+                        objRange.Value = nextItem.System;
+                        objRange.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
 
-            } // foreach (var nextItem in WORK_HOUR_ITEM_LIST)
+                        objRange = sheet.Cells[rowIndex, colIndex++];
+                        objRange.Value = nextItem.Name;
+                        objRange.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+
+                        objRange = sheet.Cells[rowIndex, colIndex++];
+                        objRange.Value = nextItem.EnterDate;
+                        objRange.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+
+                        objRange = sheet.Cells[rowIndex, colIndex++];
+                        objRange.Value = nextItem.LeaveDate;
+                        objRange.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                    }
+
+                    // write effort for each month
+                    int startColIndex = 5; // the Janary column number (1 base)
+                    colIndex = startColIndex + nextItem.Month.Month - 1;
+                    objRange = sheet.Cells[rowIndex, colIndex];
+                    objRange.Value = nextItem.StaffMonth;
+                    objRange.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+
+                } // foreach (var nextItem in systemNameMap[nextKey])
+            } // foreach (var nextKey in systemNameMap.Keys)
+            #endregion
+
         }
 
     }
