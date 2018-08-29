@@ -251,11 +251,11 @@ namespace SHANUExcelAddIn.Util
             {
                 totaldays += nextPersonInfoList.Count;
             }
-            int averageDays = totaldays / nameMap.Count;
-            foreach (var nextName in nameMap.Keys)
-            {
-                Debug.Assert(nameMap[nextName].Count <= averageDays, "there is duplicate names?  " + nextName);
-            }
+            //int averageDays = totaldays / nameMap.Count;
+            //foreach (var nextName in nameMap.Keys)
+            //{
+            //    Debug.Assert(nameMap[nextName].Count <= averageDays, "there is duplicate names?  " + nextName);
+            //}
 
             // pad the absent days
             List<AttendanceInfo> padInfoList = new List<AttendanceInfo>();
