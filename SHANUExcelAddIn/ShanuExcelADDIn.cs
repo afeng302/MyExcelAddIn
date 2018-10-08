@@ -1043,8 +1043,16 @@ namespace SHANUExcelAddIn
             {
                 Excel.Worksheet activeSheet = Globals.ThisAddIn.Application.ActiveSheet;
 
-
-                Excel.Workbook book = Globals.ThisAddIn.Application.Workbooks.Open("D:\\Working\\Hope\\绩效考核\\2018-Q2\\开发中心KPI模板-1.xlsx");
+                // select workload file
+                OpenFileDialog dlg = new OpenFileDialog();
+                dlg.Title = "绩效考核模板文件";
+                dlg.Filter = "excel文件|*.xlsx";
+                dlg.RestoreDirectory = true;
+                if (dlg.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+                Excel.Workbook book = Globals.ThisAddIn.Application.Workbooks.Open(dlg.FileName);
                 Excel.Worksheet dataSheet = null;
                 Excel.Worksheet memberSheet = null;
                 for (int i = 1; i <= book.Sheets.Count; i++)
