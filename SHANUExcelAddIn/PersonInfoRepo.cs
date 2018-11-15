@@ -45,7 +45,7 @@ namespace SHANUExcelAddIn
             int enterDateColumn = 0;
             int leaveDateColumn = 0;
 
-            // locate column index
+            #region locate column index
             for (int i = 1; i < 20; i++)
             {
                 string cellValue = sheet.Cells[1, i].Value != null ? sheet.Cells[1, i].Value.ToString() : string.Empty;
@@ -87,8 +87,11 @@ namespace SHANUExcelAddIn
                 }
 
             } // for (int i = 1; i < 20; i++)
+            #endregion locate column index
 
+            //
             // get cell values
+            List<PersonInfo> personList = new List<PersonInfo>();
             for (rowIndex = 1; rowIndex < 5000; rowIndex++)
             {
                 PersonInfo info = new PersonInfo();
@@ -124,12 +127,31 @@ namespace SHANUExcelAddIn
                 // leave date
                 info.DimissionDate = Convert.ToString(sheet.Cells[rowIndex, leaveDateColumn].Value); // != null ? sheet.Cells[rowIndex, 11].Value.ToString() : null;
 
-
-                lock (InfoMap)
-                {
-                    InfoMap[info.Name] = info;
-                }
+                personList.Add(info);
             } // for (rowIndex = 1; rowIndex < 5000; rowIndex++)
+
+            //
+            // sort on onboard date by ascend
+            personList.Sort(
+                (x, y) =>
+                    {
+                        if (string.IsNullOrWhiteSpace(x.OnboardDate))
+                        {
+                            return -1; // x - y < 0, put x ahead
+                        }
+                        return x.OnboardDate.CompareTo(y.OnboardDate);
+                    }
+                    );
+
+            // 
+            // map by name, exclude duplicate records. the latest one will take effect
+            personList.ForEach(delegate (PersonInfo info)
+                {
+                    lock (InfoMap)
+                    {
+                        InfoMap[info.Name] = info;
+                    }
+                });
 
             // correct data and set owner system
             CorrectData(InfoMap.Values);

@@ -866,7 +866,7 @@ namespace SHANUExcelAddIn
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "单价：元/人月";
+            objRange.Value = "单价：万元/人月";
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
@@ -883,6 +883,10 @@ namespace SHANUExcelAddIn
 
             objRange = sheet.Cells[rowIndex, colIndex++];
             objRange.Value = "结算金额：元";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "外包形式";
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
             #endregion // header
 
@@ -936,10 +940,13 @@ namespace SHANUExcelAddIn
                 objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                 objRange = sheet.Cells[rowIndex, colIndex++];
-                //objRange.Value = "单价：元/月";
-                unitPrice = SettleUtil.GetUnitPrice(personInfo.Company,
+                //objRange.Value = "单价：万元/月";
+                if (personInfo.WorkType == "人力")
+                {
+                    unitPrice = SettleUtil.GetUnitPrice(personInfo.Company,
                     personInfo.Department.Contains("测试") ? "测试" : "开发",
                     personInfo.Rank);
+                }
                 objRange.Value = unitPrice;
                 objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
@@ -963,6 +970,11 @@ namespace SHANUExcelAddIn
                 objRange = sheet.Cells[rowIndex, colIndex++];
                 //objRange.Value = "结算金额：元";
                 objRange.Value = string.Format("{0:0.00}", unitPrice * 10000 * performance * workLoad);
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "备注";
+                objRange.Value = personInfo.WorkType;
                 objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             } // foreach (var nextName in nameList)
@@ -1089,7 +1101,7 @@ namespace SHANUExcelAddIn
                 if (memberSheet == null)
                 {
                     MessageBox.Show("没有找到 [待考核人员名单] sheet");
-                                        
+
                     // Turn on screen updating and displaying alerts again
                     Globals.ThisAddIn.Application.ScreenUpdating = true;
                     Globals.ThisAddIn.Application.DisplayAlerts = true;
