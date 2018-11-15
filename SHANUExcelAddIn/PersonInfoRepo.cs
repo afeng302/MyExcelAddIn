@@ -154,7 +154,7 @@ namespace SHANUExcelAddIn
                 });
 
             // correct data and set owner system
-            CorrectData(InfoMap.Values);
+            //CorrectData(InfoMap.Values);
         }
 
         public static List<PersonInfo> GetOnsiteOutsourceList()
