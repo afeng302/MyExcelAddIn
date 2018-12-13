@@ -209,7 +209,7 @@ namespace SHANUExcelAddIn
 
             objRange = sheet.Cells[rowIndex, colIndex++];
             //objRange.Value = "项目组";
-            objRange.Value = personInfo != null ? personInfo.Project : string.Empty;
+            objRange.Value = personInfo != null ? personInfo.BizProject : string.Empty;
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
@@ -577,7 +577,7 @@ namespace SHANUExcelAddIn
 
                 objRange = sheet.Cells[rowIndex, colIndex++];
                 //objRange.Value = "项目组";
-                objRange.Value = personInfo.Project;
+                objRange.Value = personInfo.BizProject;
                 objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                 objRange = sheet.Cells[rowIndex, colIndex++];
@@ -707,7 +707,7 @@ namespace SHANUExcelAddIn
 
                 objRange = sheet.Cells[rowIndex, colIndex++];
                 //objRange.Value = "项目组";
-                objRange.Value = personInfo.Project;
+                objRange.Value = personInfo.BizProject;
                 objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                 objRange = sheet.Cells[rowIndex, colIndex++];
@@ -850,6 +850,10 @@ namespace SHANUExcelAddIn
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
+            objRange.Value = "人力成本归集口径";
+            objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            objRange = sheet.Cells[rowIndex, colIndex++];
             objRange.Value = "参与项目名称";
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
@@ -866,7 +870,7 @@ namespace SHANUExcelAddIn
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "单价：万元/人月";
+            objRange.Value = "单价\r\n（万元/人月）";
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
@@ -878,11 +882,11 @@ namespace SHANUExcelAddIn
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "数量：人月";
+            objRange.Value = "数量\r\n（人月）";
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
-            objRange.Value = "结算金额：元";
+            objRange.Value = "结算金额\r\n（元）";
             objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objRange = sheet.Cells[rowIndex, colIndex++];
@@ -920,8 +924,13 @@ namespace SHANUExcelAddIn
                 objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                 objRange = sheet.Cells[rowIndex, colIndex++];
+                //objRange.Value = "人力成本归集口径";
+                objRange.Value = personInfo.CostProject;
+                objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                objRange = sheet.Cells[rowIndex, colIndex++];
                 //objRange.Value = "参与项目名称";
-                objRange.Value = string.IsNullOrWhiteSpace(personInfo.System) ? personInfo.Project : personInfo.System;
+                objRange.Value = string.IsNullOrWhiteSpace(personInfo.System) ? personInfo.BizProject : personInfo.System;
                 objRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                 objRange = sheet.Cells[rowIndex, colIndex++];

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace SHANUExcelAddIn
+﻿namespace SHANUExcelAddIn
 {
     class PersonInfo
     {
@@ -24,7 +19,9 @@ namespace SHANUExcelAddIn
             set { this.manager = value; }
         }
 
-        public string Project { get; set; }
+        public string CostProject { get; set; }
+
+        public string BizProject { get; set; }
 
         public string Rank { get; set; }
 

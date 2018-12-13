@@ -38,7 +38,8 @@ namespace SHANUExcelAddIn
             int nameColumn = 0;
             int companyColumn = 0;
             int managerColumn = 0;
-            int projColumn = 0;
+            int costProjColumn = 0;
+            int bizProjColumn = 0;
             int workTypeColumn = 0;
             int rankColumn = 0;
             int departmentColumn = 0;
@@ -61,9 +62,13 @@ namespace SHANUExcelAddIn
                 {
                     managerColumn = i;
                 }
-                else if (!string.IsNullOrEmpty(cellValue) && cellValue.Contains("参与项目名称"))
+                else if (!string.IsNullOrEmpty(cellValue) && cellValue.Contains("人力成本归集"))
                 {
-                    projColumn = i;
+                    costProjColumn = i;
+                }
+                else if (!string.IsNullOrEmpty(cellValue) && cellValue.Contains("参与项目"))
+                {
+                    bizProjColumn = i;
                 }
                 else if (!string.IsNullOrEmpty(cellValue) && cellValue.Contains("外包形式"))
                 {
@@ -109,8 +114,11 @@ namespace SHANUExcelAddIn
                 // manager
                 info.Manager = Convert.ToString(sheet.Cells[rowIndex, managerColumn].Value);
 
-                // project
-                info.Project = Convert.ToString(sheet.Cells[rowIndex, projColumn].Value);
+                // cost project
+                info.CostProject = Convert.ToString(sheet.Cells[rowIndex, costProjColumn].Value);
+
+                // business project
+                info.BizProject = Convert.ToString(sheet.Cells[rowIndex, bizProjColumn].Value);
 
                 // work type
                 info.WorkType = Convert.ToString(sheet.Cells[rowIndex, workTypeColumn].Value);
@@ -180,9 +188,9 @@ namespace SHANUExcelAddIn
             // sort
             outsourceList.Sort((info1, info2) =>
             {
-                if (info1.Project != info2.Project)
+                if (info1.BizProject != info2.BizProject)
                 {
-                    return info1.Project != null ? info1.Project.CompareTo(info2.Project) : 1;
+                    return info1.BizProject != null ? info1.BizProject.CompareTo(info2.BizProject) : 1;
                 }
 
                 return info1.Company != null ? info1.Company.CompareTo(info2.Company) : 1;
@@ -208,7 +216,7 @@ namespace SHANUExcelAddIn
                     continue;
                 }
 
-                if (nextPerson.Project != null && nextPerson.Project.Contains("大数据"))
+                if (nextPerson.BizProject != null && nextPerson.BizProject.Contains("大数据"))
                 {
                     nextPerson.Department = "大数据中心";
                     continue;
@@ -225,105 +233,105 @@ namespace SHANUExcelAddIn
             #region set owner system
             foreach (var nextPerson in personList)
             {
-                if (string.IsNullOrWhiteSpace(nextPerson.Project))
+                if (string.IsNullOrWhiteSpace(nextPerson.BizProject))
                 {
                     Trace.WriteLine("nextInfo.Project is empty");
                     continue;
                 }
 
                 // correct "消费信贷（一期）"
-                if (nextPerson.Project.Contains("消费信贷（一期）")
-                    || nextPerson.Project.Contains("消费信贷（二期）"))
+                if (nextPerson.BizProject.Contains("消费信贷（一期）")
+                    || nextPerson.BizProject.Contains("消费信贷（二期）"))
                 {
-                    nextPerson.Project = "消费信贷";
+                    nextPerson.BizProject = "消费信贷";
                 }
 
                 // 个人信贷系统
-                if (nextPerson.Project.Contains("消费信贷")
-                    || nextPerson.Project.Contains("操作平台")
-                    || nextPerson.Project.Contains("信贷核心")
-                    || nextPerson.Project.Contains("资信平台")
-                    || nextPerson.Project.Contains("调度平台"))
+                if (nextPerson.BizProject.Contains("消费信贷")
+                    || nextPerson.BizProject.Contains("操作平台")
+                    || nextPerson.BizProject.Contains("信贷核心")
+                    || nextPerson.BizProject.Contains("资信平台")
+                    || nextPerson.BizProject.Contains("调度平台"))
                 {
                     nextPerson.System = "个人信贷系统";
                     continue;
                 }
 
                 // 统一支付平台
-                if (nextPerson.Project.Contains("统一支付"))
+                if (nextPerson.BizProject.Contains("统一支付"))
                 {
                     nextPerson.System = "统一支付平台";
                     continue;
                 }
 
                 // 个人理财系统
-                if (nextPerson.Project.Contains("个人理财"))
+                if (nextPerson.BizProject.Contains("个人理财"))
                 {
                     nextPerson.System = "个人理财系统";
                     continue;
                 }
 
                 // 开放平台
-                if (nextPerson.Project.Contains("开放平台")
-                    || (nextPerson.Project.Contains("渠道") && nextPerson.Project.Contains("H5")))
+                if (nextPerson.BizProject.Contains("开放平台")
+                    || (nextPerson.BizProject.Contains("渠道") && nextPerson.BizProject.Contains("H5")))
                 {
                     nextPerson.System = "开放平台";
                     continue;
                 }
 
                 // 互金平台
-                if (nextPerson.Project.Contains("互联网金融平台")
-                    || nextPerson.Project.Contains("互金平台"))
+                if (nextPerson.BizProject.Contains("互联网金融平台")
+                    || nextPerson.BizProject.Contains("互金平台"))
                 {
                     nextPerson.System = "互金平台";
                     continue;
                 }
 
                 // 对公信贷系统
-                if (nextPerson.Project.Contains("对公信贷"))
+                if (nextPerson.BizProject.Contains("对公信贷"))
                 {
                     nextPerson.System = "对公信贷系统";
                     continue;
                 }
 
                 // 客服系统
-                if (nextPerson.Project.Contains("客服"))
+                if (nextPerson.BizProject.Contains("客服"))
                 {
                     nextPerson.System = "客服系统";
                     continue;
                 }
 
                 // 渠道类系统（APP，微信）
-                if (nextPerson.Project.Contains("APP")
-                    || (nextPerson.Project.Contains("微信") && (nextPerson.Manager == "王月超"))
-                    || (nextPerson.Project.Contains("Open") && nextPerson.Project.Contains("API"))
-                    || (nextPerson.Project.Contains("渠道") && nextPerson.Project.Contains("API"))
-                    || (nextPerson.Project.Contains("电子银行渠道") && (nextPerson.Manager == "杨嘉")))
+                if (nextPerson.BizProject.Contains("APP")
+                    || (nextPerson.BizProject.Contains("微信") && (nextPerson.Manager == "王月超"))
+                    || (nextPerson.BizProject.Contains("Open") && nextPerson.BizProject.Contains("API"))
+                    || (nextPerson.BizProject.Contains("渠道") && nextPerson.BizProject.Contains("API"))
+                    || (nextPerson.BizProject.Contains("电子银行渠道") && (nextPerson.Manager == "杨嘉")))
                 {
                     nextPerson.System = "渠道类系统";
                     continue;
                 }
 
                 // 财管系统
-                if (nextPerson.Project.Contains("财管")
-                    || nextPerson.Project.Contains("总账"))
+                if (nextPerson.BizProject.Contains("财管")
+                    || nextPerson.BizProject.Contains("总账"))
                 {
                     nextPerson.System = "财管系统";
                     continue;
                 }
 
                 // 促销系统
-                if (nextPerson.Project.Contains("促销"))
+                if (nextPerson.BizProject.Contains("促销"))
                 {
                     nextPerson.System = "促销系统";
                     continue;
                 }
 
                 // 大核心银行（含联网核查，电信反诈骗等）
-                if (nextPerson.Project.Contains("核心银行")
-                    || nextPerson.Project.Contains("核心系统")
-                    || nextPerson.Project.Contains("联网核查")
-                    || nextPerson.Project.Contains("电信反诈骗"))
+                if (nextPerson.BizProject.Contains("核心银行")
+                    || nextPerson.BizProject.Contains("核心系统")
+                    || nextPerson.BizProject.Contains("联网核查")
+                    || nextPerson.BizProject.Contains("电信反诈骗"))
                 {
                     nextPerson.System = "大核心银行";
                     continue;

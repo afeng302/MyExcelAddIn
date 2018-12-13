@@ -162,10 +162,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>SHANUExcelAddIn_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>SHANUExcelAddIn_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>2FBBD1DB8658D1E63304445053B3E40F89D5CF5B</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>45B194E49F5EC3FF4DC43D97B7545DDC6D8D2D8F</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!--
     This section specifies references for the project.
@@ -262,7 +262,6 @@
     <Compile Include="ThisAddIn.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="SHANUExcelAddIn_TemporaryKey.pfx" />
     <None Include="ThisAddIn.Designer.xml">
       <DependentUpon>ThisAddIn.cs</DependentUpon>
     </None>

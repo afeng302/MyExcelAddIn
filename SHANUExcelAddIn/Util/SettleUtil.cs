@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace SHANUExcelAddIn.Util
@@ -59,11 +59,24 @@ namespace SHANUExcelAddIn.Util
 
         public static void GenerateWorkLoadMap(Excel.Workbook book)
         {
-            int sheetIndex = 1;
-            Excel.Worksheet sheet = book.Sheets[sheetIndex];
-            while ((sheet.Name != "汇总统计") && (sheetIndex++ < book.Sheets.Count))
+            Excel.Worksheet sheet = null;
+
+            if (book.Sheets.Count == 0)
             {
-                sheet = book.Sheets[sheetIndex];
+                MessageBox.Show("空文件！");
+                return;
+            }
+
+            // set the first sheet as default
+            sheet = book.Sheets[1];
+
+            foreach (Excel.Worksheet nextSheet in book.Sheets)
+            {
+                if (nextSheet.Name.Contains("汇总"))
+                {
+                    sheet = nextSheet;
+                    break;
+                }
             }
 
             // identify the column index from first line
@@ -87,6 +100,18 @@ namespace SHANUExcelAddIn.Util
                 }
             }
 
+            if (nameIndex == 0)
+            {
+                MessageBox.Show("没有找到【姓名】");
+                return;
+            }
+
+            if (workloadIndex == 0)
+            {
+                MessageBox.Show("没有找到【结算人月】");
+                return;
+            }
+
             for (int rowIndex = 2; rowIndex < 1000; rowIndex++)
             {
                 // 姓名
@@ -107,79 +132,92 @@ namespace SHANUExcelAddIn.Util
 
         public static void GeneratePerformanceMap(Excel.Workbook book)
         {
+            Excel.Worksheet sheet = null;
+
+            if (book.Sheets.Count == 0)
+            {
+                MessageBox.Show("空文件");
+                return;
+            }
+
+            // set the first sheet as default
+            sheet = book.Sheets[1];
+
             foreach (Excel.Worksheet nextSheet in book.Sheets)
             {
-                if (!nextSheet.Name.Contains("汇总"))
+                if (nextSheet.Name.Contains("汇总"))
+                {
+                    sheet = nextSheet;
+                    break;
+                }
+            }
+
+            // locate the "姓名" row
+            int nameRowIndex = 1;
+            string value = Convert.ToString(sheet.Cells[nameRowIndex, 1].Value);
+            while (!string.IsNullOrWhiteSpace(value) && !value.Contains("姓名"))
+            {
+                nameRowIndex++;
+                value = Convert.ToString(sheet.Cells[nameRowIndex, 1].Value);
+            }
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                MessageBox.Show("没有找到【姓名】");
+                return;
+            }
+
+            // locate the "绩效系数" column
+            int perfColIndex = 0;
+            for (int i = 1; i < 20; i++)
+            {
+                value = Convert.ToString(sheet.Cells[nameRowIndex, i].Value);
+                if (string.IsNullOrWhiteSpace(value))
                 {
                     continue;
                 }
 
-                // locate the "姓名" row
-                int nameRowIndex = 1;
-                string value = Convert.ToString(nextSheet.Cells[nameRowIndex, 1].Value);
-                while (!string.IsNullOrWhiteSpace(value) && !value.Contains("姓名"))
+                if (value.Contains("绩效") && value.Contains("系数"))
                 {
-                    nameRowIndex++;
-                    value = Convert.ToString(nextSheet.Cells[nameRowIndex, 1].Value);
+                    perfColIndex = i;
+                    break;
                 }
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    continue; // this is not a valid sheet
-                }
+            }
+            if (perfColIndex == 0)
+            {
+                MessageBox.Show("没有找到【绩效系数】");
+                return; 
+            }
 
-                // locate the "绩效系数" column
-                int perfColIndex = 0;
-                for (int i = 1; i < 20; i++)
+            // move to next row
+            nameRowIndex++;
+            for (int i = nameRowIndex; i < 5000; i++)
+            {
+                // 姓名
+                string name = Convert.ToString(sheet.Cells[i, 1].Value);
+                if (string.IsNullOrWhiteSpace(name))
                 {
-                    value = Convert.ToString(nextSheet.Cells[nameRowIndex, i].Value);
-                    if (string.IsNullOrWhiteSpace(value))
+                    if (i > 20)
                     {
-                        continue;
+                        break; // has complete all the rows in this sheet
                     }
-
-                    if (value.Contains("绩效") && value.Contains("系数"))
-                    {
-                        perfColIndex = i;
-                        break;
-                    }
-                }
-                if (perfColIndex == 0)
-                {
-                    continue; // this is not a valid sheet
+                    continue; // maybe have more rows later
                 }
 
-                // move to next row
-                nameRowIndex++;
-                for (int i = nameRowIndex; i < 5000; i++)
+                // 绩效
+                double perf = 1.0;
+                try
                 {
-                    // 姓名
-                    string name = Convert.ToString(nextSheet.Cells[i, 1].Value);
-                    if (string.IsNullOrWhiteSpace(name))
-                    {
-                        if (i > 20)
-                        {
-                            break; // has complete all the rows in this sheet
-                        }
-                        continue; // maybe have more rows later
-                    }
-
-                    // 绩效
-                    double perf = 1.0;
-                    try
-                    {
-                        perf = Convert.ToDouble(nextSheet.Cells[i, perfColIndex].Value);
-                    }
-                    catch (Exception)
-                    {
-                        value = Convert.ToString(nextSheet.Cells[i, perfColIndex].Value);
-                        System.Diagnostics.Trace.WriteLine("invlid performance value: " + value);
-                    }
+                    perf = Convert.ToDouble(sheet.Cells[i, perfColIndex].Value);
+                }
+                catch (Exception)
+                {
+                    value = Convert.ToString(sheet.Cells[i, perfColIndex].Value);
+                    System.Diagnostics.Trace.WriteLine("invlid performance value: " + value);
+                }
 
 
-                    PERF_MAP[name] = perf;
-                } // while (!string.IsNullOrWhiteSpace(value))
-
-            } // foreach (var nextSheet in book.Sheets)
+                PERF_MAP[name] = perf;
+            } // while (!string.IsNullOrWhiteSpace(value))
         }
 
         public static double GetPerformance(string name)
