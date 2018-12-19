@@ -49,29 +49,34 @@ namespace SHANUExcelAddIn
 
                 this.DrawUnsualHeader(activeSheet);
 
-                // get attendance info
-                Excel.Workbook attendanceBook = null;
-                if (File.Exists("C:\\data\\科技部外包考勤.xls"))
+                // select attendance file
+                OpenFileDialog dlg = new OpenFileDialog();
+                dlg.Title = "请选择考勤数据文件";
+                dlg.Filter = "excel文件|*.xlsx;*.xls";
+                dlg.RestoreDirectory = true;
+                if (dlg.ShowDialog() != DialogResult.OK)
                 {
-                    attendanceBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\科技部外包考勤.xls");
-                }
-                else if (File.Exists("C:\\data\\科技部外包考勤.xlsx"))
-                {
-                    attendanceBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\科技部外包考勤.xlsx");
-                }
-                else
-                {
-                    MessageBox.Show("[科技部外包考勤] 文件不存在");
                     return;
                 }
 
+                // get attendance info
+                Excel.Workbook attendanceBook = Globals.ThisAddIn.Application.Workbooks.Open(dlg.FileName);
                 List<AttendanceInfo> attendanceInfoList = AttendanceUtil.GetAttendanceInfoList(attendanceBook.Worksheets[1]);
 
                 // close files
                 attendanceBook.Close();
 
                 // Person Repository
-                Excel.Workbook personBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\外包人员台账.xlsx");
+                // select attendance file
+                dlg = new OpenFileDialog();
+                dlg.Title = "请选择外包人员台账文件";
+                dlg.Filter = "excel文件|*.xlsx;*.xls";
+                dlg.RestoreDirectory = true;
+                if (dlg.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+                Excel.Workbook personBook = Globals.ThisAddIn.Application.Workbooks.Open(dlg.FileName);
                 PersonInfoRepo.GenerateInfoMapByName(personBook);
                 personBook.Close();
 
@@ -93,11 +98,13 @@ namespace SHANUExcelAddIn
             {
                 MessageBox.Show(exp.ToString());
             }
-
-            // Turn on screen updating and displaying alerts again
-            Globals.ThisAddIn.Application.ScreenUpdating = true;
-            Globals.ThisAddIn.Application.DisplayAlerts = true;
-            Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+            finally
+            {
+                // Turn on screen updating and displaying alerts again
+                Globals.ThisAddIn.Application.ScreenUpdating = true;
+                Globals.ThisAddIn.Application.DisplayAlerts = true;
+                Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+            }
         }
 
         private void DrawUnsualHeader(Excel.Worksheet sheet)
@@ -418,41 +425,31 @@ namespace SHANUExcelAddIn
 
             try
             {
-                Excel.Workbook attendanceBook = null;
-
                 // get attendance info
-                if (File.Exists("C:\\data\\科技部外包考勤.xls"))
+                OpenFileDialog dlg = new OpenFileDialog();
+                dlg.Title = "请选择考勤数据文件";
+                dlg.Filter = "excel文件|*.xlsx;*.xls";
+                dlg.RestoreDirectory = true;
+                if (dlg.ShowDialog() != DialogResult.OK)
                 {
-                    attendanceBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\科技部外包考勤.xls");
-                }
-                else if (File.Exists("C:\\data\\科技部外包考勤.xlsx"))
-                {
-                    attendanceBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\科技部外包考勤.xlsx");
-                }
-                else
-                {
-                    MessageBox.Show("[科技部外包考勤] 文件不存在");
                     return;
                 }
-
+                Excel.Workbook attendanceBook = Globals.ThisAddIn.Application.Workbooks.Open(dlg.FileName);
                 List<AttendanceInfo> attendanceInfoList = AttendanceUtil.GetAttendanceInfoList(attendanceBook.Worksheets[1]);
                 attendanceBook.Close();
 
                 // Person Repository
-                Excel.Workbook personBook = null;
-                if (File.Exists("C:\\data\\外包人员台账.xls"))
+                dlg = new OpenFileDialog
                 {
-                    personBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\外包人员台账.xls");
-                }
-                else if (File.Exists("C:\\data\\外包人员台账.xlsx"))
+                    Title = "请选择外包人员台账文件",
+                    Filter = "excel文件|*.xlsx;*.xls",
+                    RestoreDirectory = true
+                };
+                if (dlg.ShowDialog() != DialogResult.OK)
                 {
-                    personBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\外包人员台账.xlsx");
-                }
-                else
-                {
-                    MessageBox.Show("[外包人员台账] 文件不存在");
                     return;
                 }
+                Excel.Workbook personBook = Globals.ThisAddIn.Application.Workbooks.Open(dlg.FileName);
                 PersonInfoRepo.GenerateInfoMapByName(personBook);
                 personBook.Close();
 
@@ -483,11 +480,13 @@ namespace SHANUExcelAddIn
 
                 throw;
             }
-
-            // Turn on screen updating and displaying alerts again
-            Globals.ThisAddIn.Application.ScreenUpdating = true;
-            Globals.ThisAddIn.Application.DisplayAlerts = true;
-            Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+            finally
+            {
+                // Turn on screen updating and displaying alerts again
+                Globals.ThisAddIn.Application.ScreenUpdating = true;
+                Globals.ThisAddIn.Application.DisplayAlerts = true;
+                Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+            }
         }
 
         private void WriteWorkLoadPerMonth(List<WorkloadInfo> workloadList, Excel.Worksheet sheet)
@@ -776,28 +775,26 @@ namespace SHANUExcelAddIn
                 priceBook.Close();
 
                 // Person Repository
-                Excel.Workbook personBook = null;
-                if (File.Exists("C:\\data\\外包人员台账.xls"))
+                // select workload file
+                OpenFileDialog dlg = new OpenFileDialog();
+                dlg.Title = "请选择外包人员台账文件";
+                dlg.Filter = "excel文件|*.xlsx;*.xls";
+                dlg.RestoreDirectory = true;
+                if (dlg.ShowDialog() != DialogResult.OK)
                 {
-                    personBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\外包人员台账.xls");
-                }
-                else if (File.Exists("C:\\data\\外包人员台账.xlsx"))
-                {
-                    personBook = Globals.ThisAddIn.Application.Workbooks.Open("C:\\data\\外包人员台账.xlsx");
-                }
-                else
-                {
-                    MessageBox.Show("[外包人员台账] 文件不存在");
                     return;
                 }
+                Excel.Workbook personBook = Globals.ThisAddIn.Application.Workbooks.Open(dlg.FileName);
                 PersonInfoRepo.GenerateInfoMapByName(personBook);
                 personBook.Close();
 
                 // select workload file
-                OpenFileDialog dlg = new OpenFileDialog();
-                dlg.Title = "请选择结算工作量文件";
-                dlg.Filter = "excel文件|*.xlsx";
-                dlg.RestoreDirectory = true;
+                dlg = new OpenFileDialog
+                {
+                    Title = "请选择结算工作量文件",
+                    Filter = "excel文件|*.xlsx;*.xls",
+                    RestoreDirectory = true
+                };
                 if (dlg.ShowDialog() != DialogResult.OK)
                 {
                     return;
@@ -828,11 +825,13 @@ namespace SHANUExcelAddIn
                 MessageBox.Show(exp.ToString());
                 throw;
             }
-
-            // Turn on screen updating and displaying alerts again
-            Globals.ThisAddIn.Application.ScreenUpdating = true;
-            Globals.ThisAddIn.Application.DisplayAlerts = true;
-            Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+            finally
+            {
+                // Turn on screen updating and displaying alerts again
+                Globals.ThisAddIn.Application.ScreenUpdating = true;
+                Globals.ThisAddIn.Application.DisplayAlerts = true;
+                Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+            }
         }
 
         private void WriteFinalSettlement(Excel.Worksheet sheet)
@@ -1044,11 +1043,13 @@ namespace SHANUExcelAddIn
             {
                 MessageBox.Show(exp.ToString());
             }
-
-            // Turn on screen updating and displaying alerts again
-            Globals.ThisAddIn.Application.ScreenUpdating = true;
-            Globals.ThisAddIn.Application.DisplayAlerts = true;
-            Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+            finally
+            {
+                // Turn on screen updating and displaying alerts again
+                Globals.ThisAddIn.Application.ScreenUpdating = true;
+                Globals.ThisAddIn.Application.DisplayAlerts = true;
+                Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+            }
         }
 
         private void btnPerfTable_Click(object sender, EventArgs e)
@@ -1144,13 +1145,15 @@ namespace SHANUExcelAddIn
             {
                 MessageBox.Show(exp.ToString());
             }
+            finally
+            {
+                //MessageBox.Show("game over...");
 
-            //MessageBox.Show("game over...");
-
-            // Turn on screen updating and displaying alerts again
-            Globals.ThisAddIn.Application.ScreenUpdating = true;
-            Globals.ThisAddIn.Application.DisplayAlerts = true;
-            Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+                // Turn on screen updating and displaying alerts again
+                Globals.ThisAddIn.Application.ScreenUpdating = true;
+                Globals.ThisAddIn.Application.DisplayAlerts = true;
+                Globals.ThisAddIn.Application.AskToUpdateLinks = true;
+            }
         }
     }
 }
