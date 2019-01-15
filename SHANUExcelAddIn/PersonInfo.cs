@@ -27,6 +27,9 @@
 
         public string Department { get; set; }
 
+        /// <summary>
+        /// useless property
+        /// </summary>
         public string System { get; set; }
 
         public string OnboardDate { get; set; }

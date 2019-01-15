@@ -18,7 +18,7 @@ namespace SHANUExcelAddIn.Util
         {
             //
             // Holidays
-            // 2017
+            #region 2017
             HOLIDAY.Add((new DateTime(2017, 10, 1)).ToShortDateString());
             HOLIDAY.Add((new DateTime(2017, 10, 2)).ToShortDateString());
             HOLIDAY.Add((new DateTime(2017, 10, 3)).ToShortDateString());
@@ -27,7 +27,9 @@ namespace SHANUExcelAddIn.Util
             HOLIDAY.Add((new DateTime(2017, 10, 6)).ToShortDateString());
             HOLIDAY.Add((new DateTime(2017, 10, 7)).ToShortDateString());
             HOLIDAY.Add((new DateTime(2017, 10, 8)).ToShortDateString());
-            // 2018
+            #endregion // 2017
+            
+            #region 2018
             HOLIDAY.Add((new DateTime(2018, 1, 1)).ToShortDateString());
             HOLIDAY.Add((new DateTime(2018, 2, 15)).ToShortDateString());
             HOLIDAY.Add((new DateTime(2018, 2, 16)).ToShortDateString());
@@ -55,6 +57,28 @@ namespace SHANUExcelAddIn.Util
             HOLIDAY.Add((new DateTime(2018, 10, 5)).ToShortDateString());
             HOLIDAY.Add((new DateTime(2018, 10, 6)).ToShortDateString());
             HOLIDAY.Add((new DateTime(2018, 10, 7)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2018, 12, 31)).ToShortDateString());
+            #endregion // 2018
+
+            #region 2019
+            HOLIDAY.Add((new DateTime(2019, 1, 1)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 2, 4)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 2, 5)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 2, 6)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 2, 7)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 2, 8)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 4, 5)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 4, 29)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 4, 30)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 5, 1)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 6, 7)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 9, 13)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 10, 1)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 10, 2)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 10, 3)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 10, 4)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 10, 7)).ToShortDateString());
+            #endregion // 2019
 
             //
             // Working weekend
@@ -67,6 +91,13 @@ namespace SHANUExcelAddIn.Util
             WORKING_WEEKEND.Add((new DateTime(2018, 4, 28)).ToShortDateString());
             WORKING_WEEKEND.Add((new DateTime(2018, 9, 29)).ToShortDateString());
             WORKING_WEEKEND.Add((new DateTime(2018, 9, 30)).ToShortDateString());
+            // 2019
+            WORKING_WEEKEND.Add((new DateTime(2019, 2, 2)).ToShortDateString());
+            WORKING_WEEKEND.Add((new DateTime(2019, 2, 3)).ToShortDateString());
+            WORKING_WEEKEND.Add((new DateTime(2019, 4, 27)).ToShortDateString());
+            WORKING_WEEKEND.Add((new DateTime(2019, 4, 28)).ToShortDateString());
+            WORKING_WEEKEND.Add((new DateTime(2019, 9, 29)).ToShortDateString());
+            WORKING_WEEKEND.Add((new DateTime(2019, 10, 12)).ToShortDateString());
         }
 
         static bool IsHoliday(DateTime date)
