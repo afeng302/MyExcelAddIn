@@ -18,7 +18,7 @@ namespace SHANUExcelAddIn.Util
             int exceptionColumnIndex = 0;
 
             // locate column index
-            for (int i = 1; i < 10; i++)
+            for (int i = 1; i < 30; i++)
             {
                 string cellValue = srcSheet.Cells[1, i].Value != null ? srcSheet.Cells[1, i].Value.ToString() : string.Empty;
                 if (cellValue == "姓名")
