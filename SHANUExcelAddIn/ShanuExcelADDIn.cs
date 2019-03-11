@@ -894,6 +894,7 @@ namespace SHANUExcelAddIn
             #endregion // header
 
             #region rows
+            int errCounter = 0;
             List<string> nameList = SettleUtil.GetNameList();
             foreach (var nextName in nameList)
             {
@@ -904,7 +905,18 @@ namespace SHANUExcelAddIn
                 if (personInfo == null)
                 {
                     //Debug.Assert(false, nextInfo.Name + " dos not exist");
-                    Trace.WriteLine("cannot find " + nextName);
+                    //Trace.WriteLine("cannot find " + nextName);
+                    
+                    if (errCounter++ < 10)
+                    {
+                        MessageBox.Show("cannot find " + nextName);
+                    }
+
+                    if (errCounter == 10)
+                    {
+                        MessageBox.Show("Too many names (>10) cannot be found!");
+                    }
+
                     continue;
                 }
 
