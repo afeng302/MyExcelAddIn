@@ -322,6 +322,24 @@ namespace SHANUExcelAddIn.Util
             } // foreach (var nextPersonInfoList in nameMap.Values)
 
             infoList.AddRange(padInfoList);
+
+            // for pan
+            foreach (var nextInfo in infoList)
+            {
+                if ((nextInfo.Name == "潘俐") && ((nextInfo.Date >= DateTime.Parse("2019-5-5")) && (nextInfo.Date <= DateTime.Parse("2019-5-11"))))
+                {
+                    nextInfo.ArriveTime = new DateTime(nextInfo.Date.Year, nextInfo.Date.Month, nextInfo.Date.Day, 9, 1, 2);
+                    nextInfo.LeaveTime = new DateTime(nextInfo.Date.Year, nextInfo.Date.Month, nextInfo.Date.Day, 19, 12, 12);
+                    nextInfo.State = AttendanceState.Normal;
+                }
+
+                if ((nextInfo.Name == "潘俐") && ((nextInfo.Date >= DateTime.Parse("2019-5-13")) && (nextInfo.Date <= DateTime.Parse("2019-5-17"))))
+                {
+                    nextInfo.ArriveTime = new DateTime(nextInfo.Date.Year, nextInfo.Date.Month, nextInfo.Date.Day, 9, 1, 2);
+                    nextInfo.LeaveTime = new DateTime(nextInfo.Date.Year, nextInfo.Date.Month, nextInfo.Date.Day, 19, 12, 12);
+                    nextInfo.State = AttendanceState.Normal;
+                }
+            }
         }
 
         static void SetAttendanceState(AttendanceInfo todayInfo, AttendanceInfo yesterdayInfo)

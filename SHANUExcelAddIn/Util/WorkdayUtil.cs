@@ -69,6 +69,8 @@ namespace SHANUExcelAddIn.Util
             HOLIDAY.Add((new DateTime(2019, 2, 8)).ToShortDateString());
             HOLIDAY.Add((new DateTime(2019, 4, 5)).ToShortDateString());
             HOLIDAY.Add((new DateTime(2019, 5, 1)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 5, 2)).ToShortDateString());
+            HOLIDAY.Add((new DateTime(2019, 5, 3)).ToShortDateString());
             HOLIDAY.Add((new DateTime(2019, 6, 7)).ToShortDateString());
             HOLIDAY.Add((new DateTime(2019, 9, 13)).ToShortDateString());
             HOLIDAY.Add((new DateTime(2019, 10, 1)).ToShortDateString());
@@ -92,6 +94,8 @@ namespace SHANUExcelAddIn.Util
             // 2019
             WORKING_WEEKEND.Add((new DateTime(2019, 2, 2)).ToShortDateString());
             WORKING_WEEKEND.Add((new DateTime(2019, 2, 3)).ToShortDateString());
+            WORKING_WEEKEND.Add((new DateTime(2019, 4, 28)).ToShortDateString());
+            WORKING_WEEKEND.Add((new DateTime(2019, 5, 5)).ToShortDateString());
             WORKING_WEEKEND.Add((new DateTime(2019, 9, 29)).ToShortDateString());
             WORKING_WEEKEND.Add((new DateTime(2019, 10, 12)).ToShortDateString());
         }

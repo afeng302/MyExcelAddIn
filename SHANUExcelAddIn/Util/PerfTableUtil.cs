@@ -44,6 +44,8 @@ namespace SHANUExcelAddIn.Util
         public string[] BigDataCenter { get; set; }
 
         public string[] DevOpsGroup { get; set; }
+
+        public string[] PrdManagers { get; set; }
     }
 
     class EvaluationInfo
@@ -164,15 +166,17 @@ namespace SHANUExcelAddIn.Util
 
                 info.AppOpses = SplitValues(sheet.Cells[rowIndex, 6].Value as string);
 
-                info.DevCenter = SplitValues(sheet.Cells[rowIndex, 7].Value as string);
+                info.PrdManagers = SplitValues(sheet.Cells[rowIndex, 7].Value as string);
 
-                info.OpsCenter = SplitValues(sheet.Cells[rowIndex, 8].Value as string);
+                info.DevCenter = SplitValues(sheet.Cells[rowIndex, 8].Value as string);
 
-                info.TestCenter = SplitValues(sheet.Cells[rowIndex, 9].Value as string);
+                info.OpsCenter = SplitValues(sheet.Cells[rowIndex, 9].Value as string);
 
-                info.BigDataCenter = SplitValues(sheet.Cells[rowIndex, 10].Value as string);
+                info.TestCenter = SplitValues(sheet.Cells[rowIndex, 10].Value as string);
 
-                info.DevOpsGroup = SplitValues(sheet.Cells[rowIndex, 11].Value as string);
+                info.BigDataCenter = SplitValues(sheet.Cells[rowIndex, 11].Value as string);
+
+                info.DevOpsGroup = SplitValues(sheet.Cells[rowIndex, 12].Value as string);
 
                 CANDIDATE_INFO_LIST.Add(info);
             } // for (int rowIndex = 1; rowIndex < 100; rowIndex++)
@@ -217,6 +221,13 @@ namespace SHANUExcelAddIn.Util
 
                 evaluationList = Build4OneEvaluatorRole(nextCandidateInfo.Name, nextCandidateInfo.Role,
                     "应用运维", nextCandidateInfo.AppOpses);
+                if (evaluationList != null)
+                {
+                    evaluationList4OnePerson.AddRange(evaluationList);
+                }
+
+                evaluationList = Build4OneEvaluatorRole(nextCandidateInfo.Name, nextCandidateInfo.Role,
+                    "产品经理", nextCandidateInfo.PrdManagers);
                 if (evaluationList != null)
                 {
                     evaluationList4OnePerson.AddRange(evaluationList);
